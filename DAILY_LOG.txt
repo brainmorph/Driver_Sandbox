@@ -1,0 +1,32 @@
+Build my 80024_SD_SPI project.
+  No Errors...
+
+Where was I... it's been a while since I've opened this project.  Been working so many days on Unity makefiles... forgot what goes on here :/
+
+volatile pointer errors...
+
+"When thinking about pointers, it helps to draw diagrams. A pointer is an arrow that points to an address in memory, with a label indicating the type of the value. The address indicates where to look and the type indicates what to take. Casting the pointer changes the label on the arrow but not where the arrow points."
+
+Note to self: namespace collisions are really bad and take a long time to resolve.
+
+So all I really had to do was insert the HAL_Delay() function into my code but because the header file it comes from also had a lot of the same register names that I'm using... there were naming collisions all over the place.  All that work... just to get HAL_Delay() working.  Ew.
+
+And... at this point I'm pretty lost.  My driver isn't quite working right... there is weird behavior.  No build errors, and SPI sends SOMETHING but it doesn't seem to send the right data...  Actually never mind.  After my last change, NOTHING works.
+
+Ok, even after git-resetting... it still doesn't work.  WTF.
+
+Checked the wiring... everything seem sok.  WHY??  I really don't want to spend time debugging this.  I'd rather start the project over and start with a test framework that essentially documents the driver as I go.
+
+Start fresh.
+
+Try to build it.  It seems to build.  Now time to start the arduous process of setting up registers and testing them.  I need a breakk I think... so I can reogranize my thoughts.
+-------------------------------------------------------------------------------------------
+
+1:10 PM 11/22/2020
+
+Name my driver file  dc_gpio_driver.c
+	-> Which means all functions in this file should start with DGD_FunctionName()
+	-> First three letter should be capitalized letters of first letter in each file name word, followed by an underscore, followed by PascalCase for function name
+	-> This helps avoid name collisions with other files
+	-> Cool...
+
