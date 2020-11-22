@@ -11,5 +11,5 @@
 
 void DGD_Initialize()
 {
-
+	// Turn on RCC.  But write test function first.
 }
