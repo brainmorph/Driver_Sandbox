@@ -81,3 +81,11 @@ void DGD_Initialize(uint32_t *regAddr, DGD_GPIO_Port_t port)
 	}
 
 }
+
+
+void DGD_ConfigureIOPin(DGD_GPIO_Port_t port, uint8_t pin, DGD_GPIO_Pin_Mode_t mode)
+{
+	// This function will be trouble... it has too many free parameters
+	//GPIO_MODER_MODER0_Msk & portA
+
+}

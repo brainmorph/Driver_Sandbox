@@ -44,6 +44,14 @@ typedef enum
 	PORTK = 10,
 }DGD_GPIO_Port_t;
 
+typedef enum
+{
+	INPUT = 0,
+	OUTPUT = 1,
+	INPUT_PD = 2,
+	INPUT_PU = 3,
+}DGD_GPIO_Pin_Mode_t;
+
 
 /***************************************************************************************************
 * Global Function Declarations

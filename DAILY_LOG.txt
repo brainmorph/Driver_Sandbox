@@ -39,4 +39,39 @@ I've run into an issue.  When testing registers are set with correct values, I u
 In the TDD book, they use virtualLEDs as a way to test if the LED register is being set correctly.  But, in my case, I need to set lots of registers.  How can I unit test that?
 
 Well, let's start at the bottom.  I need to write a function that simply sets a bit, forget about which register, just any register.
+-------------------------------------------------------------------------------------------
 
+12:46 PM 11/23/2020
+
+Set up the RCC gpio port clock enable during the initialization routine.
+
+Time to set up I/O pin configuration... but I'm a bit stuck.  I know that I need a way to select between all the ports, pins, AND modes.  On top of any other configuration details if the mode is an alternate function or analog I/O.  How can I manage this?  I can't just use nested switch statements everywhere.
+  -> I'm hazarding a guess that I need to build down before I can build up.  I.E. I need functionality that does each one of these things one at a time.
+
+The issue is, configuration options in these registers is all over the place.  Some config options are 1 bit wide, some are 2 bits wide... some more.  On top of that, they happen in different registers.
+  -> Maybe this is where the human configuration struct is useful... I can set up the configuration in plain english for a pin.  THEN, I can have a DGD_ConfigureGPIOPin() function to decypher all the english into bits and registers without the client having to worry about it.
+
+For example, GPIOx_MODER register needs 2 bits at a certain location to set a GPIO pin as input/output/alternate function/analog .  2 bits... at some location.  I'd think I could use this as a way to create a generalized function.
+
+Something like...
+DGD_SetRegisterField(uint32_t *regAddr, uint8_t width, uint8_t location, uint8_t setting)
+
+Then I could do something like
+
+/* Create bit mask from bit field width */
+uint32_t bitMask = 0;
+int i = width;
+while(i > 0)
+{
+    bitMask |= (1 << i);
+    i--;
+}
+
+/* Configure the bits to correct setting */
+bitMask = bitMask & (~bitMask | setting);
+
+/* Move bit mask to correct position */
+bitMask = bitMask << location;
+
+/* Finally merge the configured bit mask into the register */
+... NO NO NO... this doesn't work well.
