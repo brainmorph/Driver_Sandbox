@@ -30,5 +30,13 @@ Name my driver file  dc_gpio_driver.c
 	-> This helps avoid name collisions with other files
 	-> Cool...
 
-Time to add unity to project so TDD can begin
+Time to add unity to project so TDD can begin.
+
+Done.  I've added the unity framework and can build/run tests.
+
+I've run into an issue.  When testing registers are set with correct values, I use virtual registers... But.. to test this, I need the production code to accept the address of the register they should modify.  However, this opens a big can of worms.  Does EVERY single one of my functions need to accept the address of a virtual entity so that I can switch between virtual and real hardware... something doesn't seem right.
+
+In the TDD book, they use virtualLEDs as a way to test if the LED register is being set correctly.  But, in my case, I need to set lots of registers.  How can I unit test that?
+
+Well, let's start at the bottom.  I need to write a function that simply sets a bit, forget about which register, just any register.
 
