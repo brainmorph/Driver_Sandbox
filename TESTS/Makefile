@@ -50,7 +50,7 @@ help:
 %.o: %.c
 	gcc $(CFLAGS) -I$(INC_DIR) $(INC_CMSIS) $(UNITY_INC) -c $< -o $(BLD_DIR)/$(notdir $@)
 
-program: clean $(LIST_IMPORTANT_FILES:.c=.o) last_step
+program: $(LIST_IMPORTANT_FILES:.c=.o) last_step
 	./all_tests.exe
 
 

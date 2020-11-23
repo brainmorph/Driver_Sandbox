@@ -25,10 +25,10 @@ static uint32_t virtual_register = 0;
 TEST_GROUP(dc_gpio_driver);
 
 
-TEST_SETUP(dc_gpio_driver)
+TEST_SETUP(dc_gpio_driver) // This runs before every test
 {
 	//printf("Setting up test...\n");
-	virtual_register = 0x0; // initialize to reset value
+	virtual_register = 0x0;
 }
 
 TEST_TEAR_DOWN(dc_gpio_driver)
@@ -40,7 +40,7 @@ TEST(dc_gpio_driver, SetBit)
 {
 	// This test proves that without calling SetBit(), the bit doesn't set (obvious but useful)
 	uint8_t bitToTest = 7;
-	TEST_ASSERT_NOT_EQUAL(1, CHECK_BIT(virtual_register, bitToTest));
+	TEST_ASSERT_NOT_EQUAL(1, CHECK_BIT(virtual_register, bitToTest)); // notice the NOT equal in the test
 
 	// Now confirm that SetBit() does its job
 	bitToTest = 7;
@@ -84,11 +84,29 @@ TEST(dc_gpio_driver, ClearBit)
 	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, bitToTest));
 }
 
-TEST(dc_gpio_driver, InitializeGPIOAPort)
-{
-	DGD_Initialize(&virtual_register);
 
-	uint8_t bitValue = (virtual_register >> 0) & 0x1; // read correct bit number
-	TEST_ASSERT_EQUAL(bitValue, 1);
+
+TEST(dc_gpio_driver, InitializeGPIOPort)
+{
+	// Initialization of GPIO Port A should set bit 0 in RCC_AHB1ENR
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOAEN_BIT));
+	DGD_Initialize(&virtual_register, PORTA);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOAEN_BIT));
+
+
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOBEN_BIT));
+	DGD_Initialize(&virtual_register, PORTB);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOBEN_BIT));
+
+
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOCEN_BIT));
+	DGD_Initialize(&virtual_register, PORTC);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOCEN_BIT));
+
+	// ...
+
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOKEN_BIT));
+	DGD_Initialize(&virtual_register, PORTK);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOKEN_BIT));
 }
 
