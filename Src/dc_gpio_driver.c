@@ -9,7 +9,8 @@
 #include "dc_gpio_driver.h"
 #include "stm32f407xx.h"
 
-void DGD_Initialize()
+void DGD_Initialize(uint32_t *regAddr)
 {
 	// Turn on RCC.  But write test function first.
+	*regAddr |= 1;
 }

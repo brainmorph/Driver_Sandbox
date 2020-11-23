@@ -9,7 +9,9 @@
 #define DC_GPIO_DRIVER_H_
 
 
-void DGD_Initialize();
+#include <stdint.h>
+
+void DGD_Initialize(uint32_t *regAddr);
 
 
 #endif /* DC_GPIO_DRIVER_H_ */

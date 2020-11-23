@@ -8,6 +8,6 @@ static void RunAllTests(void)
 
 int main(int argc, const char * argv[])
 {
-  printf("Testing...");
+  printf("Running all tests...");
   return UnityMain(argc, argv, RunAllTests);
 }
