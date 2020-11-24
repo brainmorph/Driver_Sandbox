@@ -8,8 +8,11 @@
 #ifndef DC_GPIO_DRIVER_H_
 #define DC_GPIO_DRIVER_H_
 
-
+/**********************************************************************
+*     Include Files
+**********************************************************************/
 #include <stdint.h>
+#include "stm32f407xx.h"
 
 /**********************************************************************
 * Global Macro Definitions
@@ -42,7 +45,7 @@ typedef enum
 	PORTI = 8,
 	PORTJ = 9,
 	PORTK = 10,
-}DGD_GPIO_Port_t;
+}DGD_GPIO_Port_e;
 
 typedef enum
 {
@@ -59,7 +62,8 @@ typedef enum
 void DGD_SetBit(uint32_t *address, uint8_t bit);
 void DGD_ClearBit(uint32_t *address, uint8_t bit);
 
-void DGD_Initialize(uint32_t *regAddr, DGD_GPIO_Port_t port);
+void DGD_Initialize(uint32_t *regAddr, DGD_GPIO_Port_e port);
+void DGD_Write_GPIO_Pin(GPIO_TypeDef *port, uint8_t pin, uint8_t level);
 
 
 #endif /* DC_GPIO_DRIVER_H_ */

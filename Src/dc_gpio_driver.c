@@ -9,7 +9,7 @@
 *     Include Files
 **********************************************************************/
 #include "dc_gpio_driver.h"
-#include "stm32f407xx.h"
+
 
 
 /***************************************************************************************************
@@ -27,7 +27,7 @@ void DGD_ClearBit(uint32_t *address, uint8_t bit)
 	*address &= ~temp;
 }
 
-void DGD_Initialize(uint32_t *regAddr, DGD_GPIO_Port_t port)
+void DGD_Initialize(uint32_t *regAddr, DGD_GPIO_Port_e port)
 {
 	switch(port)
 	{
@@ -83,9 +83,8 @@ void DGD_Initialize(uint32_t *regAddr, DGD_GPIO_Port_t port)
 }
 
 
-void DGD_ConfigureIOPin(DGD_GPIO_Port_t port, uint8_t pin, DGD_GPIO_Pin_Mode_t mode)
+void DGD_Write_GPIO_Pin(GPIO_TypeDef *port, uint8_t pin, uint8_t level)
 {
-	// This function will be trouble... it has too many free parameters
-	//GPIO_MODER_MODER0_Msk & portA
-
+	uint8_t registerFieldPosition = pin * 2; // MODER has 2 bits per field for each pin
+	port->MODER |= (level << registerFieldPosition);
 }

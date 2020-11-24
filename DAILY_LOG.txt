@@ -75,3 +75,47 @@ bitMask = bitMask << location;
 
 /* Finally merge the configured bit mask into the register */
 ... NO NO NO... this doesn't work well.
+
+-------------------------------------------------------------------------------------------
+
+2:17 PM 11/24/2020
+
+Finally reaching out to people for ideas on how to mount this interface issue... I don't know how to create a easily manageable way to modify lots of registers and subfields.
+
+One suggestion I received is to make a GPIO_Port_t type (which I already have) but to associate the base address of the PORT register with the type.  Then somehow use this type to associate the address offsets for all the individual registers and bits of each port.  Not clear yet but some light at the end of the tunnel...
+
+
+Here's what I know.  My PORT register offset can be encapsulated in a struct:
+
+typedef struct
+{
+  __IO uint32_t MODER;    /*!< GPIO port mode register,               Address offset: 0x00      */
+  __IO uint32_t OTYPER;   /*!< GPIO port output type register,        Address offset: 0x04      */
+  __IO uint32_t OSPEEDR;  /*!< GPIO port output speed register,       Address offset: 0x08      */
+  __IO uint32_t PUPDR;    /*!< GPIO port pull-up/pull-down register,  Address offset: 0x0C      */
+  __IO uint32_t IDR;      /*!< GPIO port input data register,         Address offset: 0x10      */
+  __IO uint32_t ODR;      /*!< GPIO port output data register,        Address offset: 0x14      */
+  __IO uint32_t BSRR;     /*!< GPIO port bit set/reset register,      Address offset: 0x18      */
+  __IO uint32_t LCKR;     /*!< GPIO port configuration lock register, Address offset: 0x1C      */
+  __IO uint32_t AFR[2];   /*!< GPIO alternate function registers,     Address offset: 0x20-0x24 */
+} GPIO_TypeDef;
+
+
+Then, each specific port can be accessed like this:
+
+#define GPIOA               ((GPIO_TypeDef *) GPIOA_BASE)
+#define GPIOB               ((GPIO_TypeDef *) GPIOB_BASE)
+#define GPIOC               ((GPIO_TypeDef *) GPIOC_BASE)
+
+
+I.E.
+
+GPIOA->MODER to set the MODER register of PORTA.  Great.  But, I still need a way to access this inside a function.
+
+Maybe I can do something like
+
+Write_GPIO_Pin(GPIO_TpeDef *port, uint8_t pin, uint8_t level)
+{
+  port->MODER = // set to output
+  port->ODR = // set correct pin to output
+}

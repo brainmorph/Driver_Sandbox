@@ -9,7 +9,7 @@
 /***************************************************************************************************
 *     Local Macro Definitions
 ***************************************************************************************************/
-#define CHECK_BIT(reg, num) ((reg >> num) & 0x1)
+#define CHECK_BIT(reg, num) (((reg) >> num) & 0x1)
 
 /***************************************************************************************************
 *     Static Function Declarations
@@ -19,6 +19,7 @@
 *     Static Variable Definitions
 ***************************************************************************************************/
 static uint32_t virtual_register = 0;
+static GPIO_TypeDef virtual_port;
 
 
 
@@ -29,6 +30,8 @@ TEST_SETUP(dc_gpio_driver) // This runs before every test
 {
 	//printf("Setting up test...\n");
 	virtual_register = 0x0;
+
+	virtual_port.MODER = 0x0;
 }
 
 TEST_TEAR_DOWN(dc_gpio_driver)
@@ -108,5 +111,16 @@ TEST(dc_gpio_driver, InitializeGPIOPort)
 	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOKEN_BIT));
 	DGD_Initialize(&virtual_register, PORTK);
 	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOKEN_BIT));
+}
+
+
+
+TEST(dc_gpio_driver, WriteGPIOOutputHigh)
+{
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_port.MODER, 0));
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_port.MODER, 1));
+	DGD_Write_GPIO_Pin(&virtual_port, 0, 1);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_port.MODER, 0));
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_port.MODER, 1));
 }
 
