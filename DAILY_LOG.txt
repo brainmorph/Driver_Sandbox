@@ -119,3 +119,22 @@ Write_GPIO_Pin(GPIO_TpeDef *port, uint8_t pin, uint8_t level)
   port->MODER = // set to output
   port->ODR = // set correct pin to output
 }
+
+
+
+-------------------------------------------------------------------------------------------
+
+12:11 PM 11/25/2020
+
+I think I'm doing something fundamentally flawed.  My interface design doesn't really hide details of the inner workings.
+
+If I'm a client of dc_gpio_driver.h, all I want to be able to do is... do things like this:
+
+DGD_Write_GPIO_Pin(port, pin, level) // unsure about what the type of each argument should be
+
+Maybe the gpio_driver interface can provide the client with a list of possible options.  In fact, it SHOULD.  To prevent the client from having to dig into the driver code AT ALL.  Like... I don't want the client to be reponsible for comming up with the correct address.  That would be insane... what's even the point of my driver if the client has to go into the datasheet or the MCU specific header file.  Pointless..
+
+Ok so I know that my driver should offer the functions and the OPTIONS for the functions that the client should know about.  Like... a radio interface.  Only certain knobs are exposed and only certain knob values can be achieved unless the knob is like a potentiometer.
+
+
+

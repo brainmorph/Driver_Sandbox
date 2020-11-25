@@ -20,7 +20,7 @@
 ***************************************************************************************************/
 static uint32_t virtual_register = 0;
 static GPIO_TypeDef virtual_port;
-
+static DGD_GPIO_Port_t virtual_gpio_handle;
 
 
 TEST_GROUP(dc_gpio_driver);
@@ -89,38 +89,50 @@ TEST(dc_gpio_driver, ClearBit)
 
 
 
-TEST(dc_gpio_driver, InitializeGPIOPort)
+//TEST(dc_gpio_driver, InitializeGPIOPort)
+//{
+//	// Initialization of GPIO Port A should set bit 0 in RCC_AHB1ENR
+//	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, 0));
+//	DGD_Initialize(&virtual_register, PORTA);
+//	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, 0));
+//
+//
+//	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, 1));
+//	DGD_Initialize(&virtual_register, PORTB);
+//	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, 1));
+//
+//
+//	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, 2));
+//	DGD_Initialize(&virtual_register, PORTC);
+//	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, 2));
+//
+//	// ...
+//
+//	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, 3));
+//	DGD_Initialize(&virtual_register, PORTI);
+//	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, 3));
+//}
+
+
+
+TEST(dc_gpio_driver, DGD_Select_Port_BaseAddress)
 {
-	// Initialization of GPIO Port A should set bit 0 in RCC_AHB1ENR
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOAEN_BIT));
-	DGD_Initialize(&virtual_register, PORTA);
-	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOAEN_BIT));
+	TEST_ASSERT_EQUAL(0, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTA));
+	TEST_ASSERT_EQUAL(0, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTB));
+	TEST_ASSERT_EQUAL(0, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTC));
+	TEST_ASSERT_EQUAL(0, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTD));
+	TEST_ASSERT_EQUAL(-1, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, 33));
 
 
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOBEN_BIT));
-	DGD_Initialize(&virtual_register, PORTB);
-	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOBEN_BIT));
+	printf("GPIO A address = %x\n", GPIOA);
+	printf("GPIO B address = %x\n", GPIOB);
+	printf("GPIO C address = %x\n", GPIOC);
 
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTA);
+	printf("virtual gpio handle port register base = %x\n", virtual_gpio_handle.portRegisters);
 
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOCEN_BIT));
-	DGD_Initialize(&virtual_register, PORTC);
-	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOCEN_BIT));
-
-	// ...
-
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOKEN_BIT));
-	DGD_Initialize(&virtual_register, PORTK);
-	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_register, DGD_RCC_AHB1ENR_GPIOKEN_BIT));
-}
-
-
-
-TEST(dc_gpio_driver, WriteGPIOOutputHigh)
-{
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_port.MODER, 0));
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_port.MODER, 1));
-	DGD_Write_GPIO_Pin(&virtual_port, 0, 1);
-	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_port.MODER, 0));
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_port.MODER, 1));
+	TEST_ASSERT_EQUAL(GPIOA, virtual_gpio_handle.portRegisters);
+//
+//	TEST_ASSERT_EQUAL()
 }
 

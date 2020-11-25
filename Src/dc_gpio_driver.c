@@ -9,7 +9,31 @@
 *     Include Files
 **********************************************************************/
 #include "dc_gpio_driver.h"
+#include <stddef.h>
 
+
+/***************************************************************************************************
+*     Local Type Definitions
+***************************************************************************************************/
+typedef struct
+{
+//	GPIO_TypeDef* GPIOA;
+//	GPIO_TypeDef* GPIOB;
+}DGD_GPIO_t;
+
+
+
+/***************************************************************************************************
+*     Static Function Declarations
+***************************************************************************************************/
+unit_static int DGD_Select_Port_BaseAddress(DGD_GPIO_Port_t* activeGPIOhandle, DGD_Port_enum port);
+
+
+
+/***************************************************************************************************
+*     Static Variable Definitions
+***************************************************************************************************/
+static DGD_GPIO_Port_t activeGPIOhandle;
 
 
 /***************************************************************************************************
@@ -27,64 +51,121 @@ void DGD_ClearBit(uint32_t *address, uint8_t bit)
 	*address &= ~temp;
 }
 
-void DGD_Initialize(uint32_t *regAddr, DGD_GPIO_Port_e port)
+
+
+
+void DGD_Write_GPIO_Pin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level)
+{
+	// I need the client to be able to pick amongst port/pin/level
+	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
+}
+
+
+unit_static int DGD_Select_Port_BaseAddress(DGD_GPIO_Port_t* activeGPIOhandle, DGD_Port_enum port)
 {
 	switch(port)
 	{
 	case PORTA:
-		// Turn on clock to PORTA
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOAEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOA;
 		break;
-
 	case PORTB:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOBEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOB;
 		break;
-
 	case PORTC:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOCEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOC;
 		break;
-
 	case PORTD:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIODEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOD;
 		break;
-
 	case PORTE:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOEEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOE;
 		break;
-
 	case PORTF:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOFEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOF;
 		break;
-
 	case PORTG:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOGEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOG;
 		break;
-
 	case PORTH:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOHEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOH;
 		break;
-
 	case PORTI:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOIEN_BIT);
-		break;
-
-	case PORTJ:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOJEN_BIT);
-		break;
-
-	case PORTK:
-		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOKEN_BIT);
+		activeGPIOhandle->portRegisters = (DGD_GPIO_TypeDef*)GPIOI;
 		break;
 
 	default:
-		break;
+		return -1;
 	}
 
+	return 0;
 }
 
 
-void DGD_Write_GPIO_Pin(GPIO_TypeDef *port, uint8_t pin, uint8_t level)
-{
-	uint8_t registerFieldPosition = pin * 2; // MODER has 2 bits per field for each pin
-	port->MODER |= (level << registerFieldPosition);
-}
+
+
+
+
+
+
+
+
+
+
+/* --- Everything below this line is sandbox --- */
+
+//void DGD_Initialize_OBSOLETE(uint32_t *regAddr, DGD_GPIO_Port_e port)
+//{
+//	// a better way to do it is to pass in GPIO_TypeDef *port as an argument
+//	// and let the direct address pointing handle which port is being used a.k.a
+//	// port->
+//	switch(port)
+//	{
+//	case PORTA:
+//		// Turn on clock to PORTA
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOAEN_BIT);
+//		break;
+//
+//	case PORTB:
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOBEN_BIT);
+//		break;
+//
+//	case PORTC:
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOCEN_BIT);
+//		break;
+//
+//	case PORTD:
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIODEN_BIT);
+//		break;
+//
+//	case PORTE:
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOEEN_BIT);
+//		break;
+//
+//	case PORTF:
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOFEN_BIT);
+//		break;
+//
+//	case PORTG:
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOGEN_BIT);
+//		break;
+//
+//	case PORTH:
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOHEN_BIT);
+//		break;
+//
+//	case PORTI:
+//		DGD_SetBit(regAddr, DGD_RCC_AHB1ENR_GPIOIEN_BIT);
+//		break;
+//
+//	default:
+//		break;
+//	}
+//
+//}
+//
+//
+//void DGD_Write_GPIO_Pin(GPIO_TypeDef *port, uint8_t pin, uint8_t level)
+//{
+//	uint8_t registerFieldPosition = pin * 2; // Each pin bit field is located 2 bits ahead of the one before
+//	port->MODER |= (level << registerFieldPosition);
+//}

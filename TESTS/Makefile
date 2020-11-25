@@ -17,7 +17,10 @@ CFLAGS += -Wall
 
 
 
-INC_DIR = ../Inc
+INC_H_DIR = ../Inc
+INC_ALL = $(INC_H_DIR)
+
+INC_DIR = $(addprefix -I, $(INC_ALL))
 
 # Processor specific header files are... complicated.  Add all header files in the CMSIS sub-dirs
 INC_CMSIS := $(addprefix -I,$(shell find ../Drivers/CMSIS/ -type d -print))
@@ -41,6 +44,9 @@ LIST_IMPORTANT_FILES = $(TST_DIR)/Test_dc_gpio_driver.c \
 						$(UNITY_DIR)/src/unity.c \
 
 
+MACRO_DEFINE_LIST = UNIT_TEST
+MACRO_DEFINE = $(addprefix -D , $(MACRO_DEFINE_LIST))
+
 help:
 	echo $(LIST_IMPORTANT_FILES)
 	echo $(LIST_IMPORTANT_FILES:.c=.o)
@@ -48,7 +54,7 @@ help:
 
 
 %.o: %.c
-	gcc $(CFLAGS) -I$(INC_DIR) $(INC_CMSIS) $(UNITY_INC) -c $< -o $(BLD_DIR)/$(notdir $@)
+	gcc $(CFLAGS) $(INC_DIR) $(INC_CMSIS) $(UNITY_INC) $(MACRO_DEFINE) -c $< -o $(BLD_DIR)/$(notdir $@)
 
 program: $(LIST_IMPORTANT_FILES:.c=.o) last_step
 	./all_tests.exe
