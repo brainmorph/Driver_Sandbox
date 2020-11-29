@@ -83,8 +83,10 @@ void DGD_SetBit(volatile uint32_t *address, uint8_t bit);
 void DGD_ClearBit(volatile uint32_t *address, uint8_t bit);
 
 void DGD_Initialize(uint32_t *regAddr, DGD_Port_enum port);
-void DGD_Set_GPIO_Direction(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode);
-void DGD_Write_GPIO_Pin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level);
+
+void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode);
+void DGD_WritePin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level);
+void DGD_ReadPin(DGD_Port_enum port, uint8_t pin);
 
 
 #endif /* DC_GPIO_DRIVER_H_ */

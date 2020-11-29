@@ -194,7 +194,7 @@ TEST(dc_gpio_driver, DGD_Set_GPIO_Direction)
 	uint8_t bitToTest = 0;
 
 	// Test input mode
-	DGD_Set_GPIO_Direction(PORTA, 0, INPUT);
+	DGD_SetPinDirection(PORTA, 0, INPUT);
 	bitToTest = 0;
 	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
 	bitToTest = 1;
@@ -202,7 +202,7 @@ TEST(dc_gpio_driver, DGD_Set_GPIO_Direction)
 	printf("MODER set to input: %x\n", virtual_gpio_handle.portRegisters->MODER);
 
 	// Test output mode
-	DGD_Set_GPIO_Direction(PORTA, 0, OUTPUT);
+	DGD_SetPinDirection(PORTA, 0, OUTPUT);
 	bitToTest = 0;
 	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
 	bitToTest = 1;

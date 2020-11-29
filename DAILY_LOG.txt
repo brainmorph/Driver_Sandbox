@@ -168,3 +168,21 @@ Fixed it... SetBit() and ClearBit() should have volatile qualifier on the first 
 At some point I need to graduate past making snail paced progress on the GPIO driver.  Trying to finish up write/read GPIO functionality.
 
 Order this book: "Small Unmanned Aircraft: Theory and Practice"
+
+
+
+-------------------------------------------------------------------------------------------
+
+4:01 PM 11/29/2020
+
+It's becoming evident that I am trying to invest too much energy into making the GPIO driver perfect.  While at the same time trying to think about how to make the lessons I learn making the GPIO driver applicable to other drivers.  Or to embedded programming in general.  There's so much to think about and I trying to do it all in parallel is REALLY slowing me down.  It might be smarter to try finishing the GPIO driver to the best of my ability for now and moving on to other interfaces (like maybe an interrupt management interface since most likely that will be used in lots of places anyway).  That way I don't have to spend too much time worrying about what's worth working on next.  Just pick the most general pieces and move inward towards the final solution.
+
+So in my case, it might be wise to finish my GPIO driver interface with 
+DGD_InitPort(enum port) // turn on RCC to port
+DGD_DeInitPort(enum port) // maybe turn off (tri-state) the output pins and turn off RCC to port
+DGD_SetPinDirection(enum port, pin, mode)
+DGD_WritePin(enum port, pin, level)
+DGD_ReadPin(enum port, pin)
+
+
+Just as a comparison point, looking through my old flight controller project, I didn't do a great job of defining the interfaces clearly out of modules.  There's so much overlap, i.e. motorControl.c has a PUBLIC function named GatherSensorData()... no way does that make sense.  I'm inputting sensor aquisition logic into the motorControl driver... no.  Now it MAY be possible that I meant this function to be internal and private to the motorControl, but if that's the case I totally forgot to prefix it as "static".  Yeah, either way I look at it, the lesson is that motorControl seems to have logic associated with sensor data and that just doesn't make sense.  So I am learning!  Yaya!

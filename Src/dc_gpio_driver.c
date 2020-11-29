@@ -51,7 +51,7 @@ void DGD_ClearBit(volatile uint32_t *address, uint8_t bit)
 	*address &= ~temp;
 }
 
-void DGD_Set_GPIO_Direction(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode)
+void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode)
 {
 #ifndef UNIT_TEST
 	// Select appropriate GPIO Port base address
@@ -73,7 +73,7 @@ void DGD_Set_GPIO_Direction(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum m
 }
 
 
-void DGD_Write_GPIO_Pin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level)
+void DGD_WritePin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level)
 {
 #ifndef UNIT_TEST
 	// Select appropriate GPIO Port base address
@@ -91,7 +91,7 @@ void DGD_Write_GPIO_Pin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum leve
 	}
 }
 
-void DGD_Read_GPIO_Pin(DGD_Port_enum port, uint8_t pin)
+void DGD_ReadPin(DGD_Port_enum port, uint8_t pin)
 {
 
 }
