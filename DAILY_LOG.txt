@@ -137,4 +137,30 @@ Maybe the gpio_driver interface can provide the client with a list of possible o
 Ok so I know that my driver should offer the functions and the OPTIONS for the functions that the client should know about.  Like... a radio interface.  Only certain knobs are exposed and only certain knob values can be achieved unless the knob is like a potentiometer.
 
 
+-------------------------------------------------------------------------------------------
 
+1:34 PM 11/27/2020
+
+Well I finally got a basic GPIO interface going.  It's still rough.  The associated tests are even more rough.  Not super happy about how development for this has gone but at least I learned how to make a basic GPIO interface as a starting point.  Where can I go next?
+
+Well, let's flesh out the GPIO driver interface.
+
+
+
+-------------------------------------------------------------------------------------------
+
+4:46 PM 11/28/2020
+
+Getting a warning I don't understand.
+
+warning: passing argument 1 of 'DGD_SetBit' makes pointer from integer without a cast [-Wint-conversion]
+
+-->function declaration
+void DGD_SetBit(uint32_t *address, uint8_t bit)
+
+-->function call
+DGD_SetBit(activeGPIOhandle.portRegisters->MODER, 0);
+
+What I don't get is... the function expects a pointer to uint32_t.  OOOOH.  I'm passing in the VALUE of the register.  I need to pass in the address.
+
+Fixed it... SetBit() and ClearBit() should have volatile qualifier on the first parameter since they pretty much always modify hardware registers.  If I happen to pass in a register that is not tied to actual hardware, I only lose out on a bit of optimization.

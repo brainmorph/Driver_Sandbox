@@ -17,7 +17,7 @@
 /**********************************************************************
 * Global Macro Definitions
 **********************************************************************/
-#if UNIT_TEST
+#ifdef UNIT_TEST
 #define unit_static
 #else
 #define unit_static static
@@ -73,8 +73,8 @@ typedef struct
 /***************************************************************************************************
 * Global Function Declarations
 ***************************************************************************************************/
-void DGD_SetBit(uint32_t *address, uint8_t bit);
-void DGD_ClearBit(uint32_t *address, uint8_t bit);
+void DGD_SetBit(volatile uint32_t *address, uint8_t bit);
+void DGD_ClearBit(volatile uint32_t *address, uint8_t bit);
 
 void DGD_Initialize(uint32_t *regAddr, DGD_Port_enum port);
 void DGD_Write_GPIO_Pin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level);

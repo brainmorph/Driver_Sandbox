@@ -39,12 +39,12 @@ static DGD_GPIO_Port_t activeGPIOhandle;
 /***************************************************************************************************
 *      Global Function Definitions
 ***************************************************************************************************/
-void DGD_SetBit(uint32_t *address, uint8_t bit)
+void DGD_SetBit(volatile uint32_t *address, uint8_t bit)
 {
 	*address |= (1 << bit);
 }
 
-void DGD_ClearBit(uint32_t *address, uint8_t bit)
+void DGD_ClearBit(volatile uint32_t *address, uint8_t bit)
 {
 	uint32_t temp = 0;
 	temp |= (1 << bit);
@@ -56,8 +56,24 @@ void DGD_ClearBit(uint32_t *address, uint8_t bit)
 
 void DGD_Write_GPIO_Pin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level)
 {
+#ifndef UNIT_TEST
 	// I need the client to be able to pick amongst port/pin/level
 	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
+#endif
+
+	// Set MODER bits to output mode
+	DGD_SetBit(&(activeGPIOhandle.portRegisters->MODER), 0);
+	DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), 1);
+
+	// Set pin level
+	if(level == HIGH)
+	{
+		DGD_SetBit(&activeGPIOhandle.portRegisters->BSRR, pin + 16);
+	}
+	else
+	{
+		DGD_ClearBit(&activeGPIOhandle.portRegisters->BSRR, pin + 16);
+	}
 }
 
 
