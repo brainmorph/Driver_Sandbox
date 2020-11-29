@@ -32,6 +32,12 @@ TEST_SETUP(dc_gpio_driver) // This runs before every test
 	virtual_register = 0x0;
 
 	virtual_port.MODER = 0x0;
+	virtual_port.BSRR = 0x0;
+	virtual_port.IDR = 0x0;
+
+	virtual_gpio_handle.portRegisters = &virtual_port;
+
+	UT_SetActiveGPIOhandle(&virtual_gpio_handle); // inject virtual GPIO handle into driver
 }
 
 TEST_TEAR_DOWN(dc_gpio_driver)
@@ -117,6 +123,7 @@ TEST(dc_gpio_driver, ClearBit)
 
 TEST(dc_gpio_driver, DGD_Select_Port_BaseAddress)
 {
+	// Test return value of function
 	TEST_ASSERT_EQUAL(0, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTA));
 	TEST_ASSERT_EQUAL(0, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTB));
 	TEST_ASSERT_EQUAL(0, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTC));
@@ -124,15 +131,81 @@ TEST(dc_gpio_driver, DGD_Select_Port_BaseAddress)
 	TEST_ASSERT_EQUAL(-1, DGD_Select_Port_BaseAddress(&virtual_gpio_handle, 33));
 
 
-	printf("GPIO A address = %x\n", GPIOA);
+	printf("\nGPIO A address = %x\n", GPIOA);
 	printf("GPIO B address = %x\n", GPIOB);
 	printf("GPIO C address = %x\n", GPIOC);
+	printf("GPIO D address = %x\n", GPIOD);
+	printf("GPIO E address = %x\n", GPIOE);
+	printf("GPIO F address = %x\n", GPIOF);
+	printf("GPIO G address = %x\n", GPIOG);
+	printf("GPIO H address = %x\n", GPIOH);
+	printf("GPIO I address = %x\n", GPIOI);
 
+
+	// Check register base address is set correctly
 	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTA);
-	printf("virtual gpio handle port register base = %x\n", virtual_gpio_handle.portRegisters);
-
+	printf("virtual gpio A port register base = %x\n", virtual_gpio_handle.portRegisters);
 	TEST_ASSERT_EQUAL(GPIOA, virtual_gpio_handle.portRegisters);
-//
-//	TEST_ASSERT_EQUAL()
+
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTB);
+	printf("virtual gpio B port register base = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(GPIOB, virtual_gpio_handle.portRegisters);
+
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTC);
+	printf("virtual gpio C port register base = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(GPIOC, virtual_gpio_handle.portRegisters);
+
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTD);
+	printf("virtual gpio D port register base = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(GPIOD, virtual_gpio_handle.portRegisters);
+
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTE);
+	printf("virtual gpio E port register base = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(GPIOE, virtual_gpio_handle.portRegisters);
+
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTF);
+	printf("virtual gpio F port register base = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(GPIOF, virtual_gpio_handle.portRegisters);
+
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTG);
+	printf("virtual gpio G port register base = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(GPIOG, virtual_gpio_handle.portRegisters);
+
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTH);
+	printf("virtual gpio H port register base = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(GPIOH, virtual_gpio_handle.portRegisters);
+
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, PORTI);
+	printf("virtual gpio I port register base = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(GPIOI, virtual_gpio_handle.portRegisters);
+
+
+	// If port selection is out of bounds, test that function doesn't alter the base register address
+	DGD_GPIO_TypeDef* temp = virtual_gpio_handle.portRegisters;
+	printf("virtual port register base BEFORE invalid selection = %x\n", temp);
+	DGD_Select_Port_BaseAddress(&virtual_gpio_handle, 33);
+	printf("virtual port register base AFTER invalid selection = %x\n", virtual_gpio_handle.portRegisters);
+	TEST_ASSERT_EQUAL(temp, virtual_gpio_handle.portRegisters);
 }
 
+TEST(dc_gpio_driver, DGD_Set_GPIO_Direction)
+{
+
+	uint8_t bitToTest = 0;
+
+	// Test input mode
+	DGD_Set_GPIO_Direction(PORTA, 0, INPUT);
+	bitToTest = 0;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
+	bitToTest = 1;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
+	printf("MODER set to input: %x\n", virtual_gpio_handle.portRegisters->MODER);
+
+	// Test output mode
+	DGD_Set_GPIO_Direction(PORTA, 0, OUTPUT);
+	bitToTest = 0;
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
+	bitToTest = 1;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
+	printf("MODER set to output: %x\n", virtual_gpio_handle.portRegisters->MODER);
+}

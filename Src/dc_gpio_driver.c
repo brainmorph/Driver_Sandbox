@@ -24,16 +24,16 @@ typedef struct
 
 
 /***************************************************************************************************
-*     Static Function Declarations
+*     Static Variable Definitions
 ***************************************************************************************************/
-unit_static int DGD_Select_Port_BaseAddress(DGD_GPIO_Port_t* activeGPIOhandle, DGD_Port_enum port);
+static DGD_GPIO_Port_t activeGPIOhandle;
 
 
 
 /***************************************************************************************************
-*     Static Variable Definitions
+*     Static Function Declarations
 ***************************************************************************************************/
-static DGD_GPIO_Port_t activeGPIOhandle;
+unit_static int DGD_Select_Port_BaseAddress(DGD_GPIO_Port_t* activeGPIOhandle, DGD_Port_enum port);
 
 
 /***************************************************************************************************
@@ -51,29 +51,49 @@ void DGD_ClearBit(volatile uint32_t *address, uint8_t bit)
 	*address &= ~temp;
 }
 
+void DGD_Set_GPIO_Direction(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode)
+{
+#ifndef UNIT_TEST
+	// Select appropriate GPIO Port base address
+	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
+#endif
 
+	if(mode == OUTPUT)
+	{
+		// Set MODER bits to output mode
+		DGD_SetBit(&(activeGPIOhandle.portRegisters->MODER), 0);
+		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), 1);
+	}
+	else if(mode == INPUT)
+	{
+		// Set MODER bits to input mode
+		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), 0);
+		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), 1);
+	}
+}
 
 
 void DGD_Write_GPIO_Pin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level)
 {
 #ifndef UNIT_TEST
-	// I need the client to be able to pick amongst port/pin/level
+	// Select appropriate GPIO Port base address
 	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
 #endif
-
-	// Set MODER bits to output mode
-	DGD_SetBit(&(activeGPIOhandle.portRegisters->MODER), 0);
-	DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), 1);
 
 	// Set pin level
 	if(level == HIGH)
 	{
-		DGD_SetBit(&activeGPIOhandle.portRegisters->BSRR, pin + 16);
+		DGD_SetBit(&activeGPIOhandle.portRegisters->BSRR, pin);
 	}
 	else
 	{
-		DGD_ClearBit(&activeGPIOhandle.portRegisters->BSRR, pin + 16);
+		DGD_SetBit(&activeGPIOhandle.portRegisters->BSRR, pin + 16);
 	}
+}
+
+void DGD_Read_GPIO_Pin(DGD_Port_enum port, uint8_t pin)
+{
+
 }
 
 
@@ -117,10 +137,25 @@ unit_static int DGD_Select_Port_BaseAddress(DGD_GPIO_Port_t* activeGPIOhandle, D
 }
 
 
+#ifdef UNIT_TEST
+/***************************************************************************************************
+*      Functions in this section are only to be used for unit testing internal functionality of module
+*      !DO NOT USE IN PRODUCTION CODE!
+***************************************************************************************************/
+/* Only used for unit testing internal functionality of module */
+/* !DO NOT USE IN PRODUCTION CODE! */
+unit_static void UT_SetActiveGPIOhandle(DGD_GPIO_Port_t* newHandle)
+{
+	activeGPIOhandle = *newHandle;
+}
 
-
-
-
+unit_static DGD_GPIO_Port_t* UT_GetActiveGPIOhandle()
+{
+	return &activeGPIOhandle;
+}
+/***************************************************************************************************
+****************************************************************************************************/
+#endif
 
 
 

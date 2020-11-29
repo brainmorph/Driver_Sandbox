@@ -164,3 +164,7 @@ DGD_SetBit(activeGPIOhandle.portRegisters->MODER, 0);
 What I don't get is... the function expects a pointer to uint32_t.  OOOOH.  I'm passing in the VALUE of the register.  I need to pass in the address.
 
 Fixed it... SetBit() and ClearBit() should have volatile qualifier on the first parameter since they pretty much always modify hardware registers.  If I happen to pass in a register that is not tied to actual hardware, I only lose out on a bit of optimization.
+
+At some point I need to graduate past making snail paced progress on the GPIO driver.  Trying to finish up write/read GPIO functionality.
+
+Order this book: "Small Unmanned Aircraft: Theory and Practice"
