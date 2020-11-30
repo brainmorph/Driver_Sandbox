@@ -51,9 +51,32 @@ void DGD_ClearBit(volatile uint32_t *address, uint8_t bit)
 	*address &= ~temp;
 }
 
+void DGD_InitPort(DGD_Port_enum port)
+{
+#ifndef UNIT_TEST
+	// If unit testing, don't change the RCC GPIO clock enable address
+	// We don't want unit test (which runs on host pc) to modify memory outside the virtual GPIO port
+	activeGPIOhandle.portClock = &RCC->AHB1ENR;
+#endif
+
+	switch(port)
+	{
+	case PORTA:
+		DGD_SetBit(activeGPIOhandle.portClock, 0);
+		break;
+	case PORTB:
+		DGD_SetBit(activeGPIOhandle.portClock, 1);
+		break;
+	default:
+		break;
+	}
+}
+
+
 void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode)
 {
 #ifndef UNIT_TEST
+	// We don't want unit test (which runs on host pc) to modify memory outside the virtual GPIO port.
 	// Select appropriate GPIO Port base address
 	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
 #endif
@@ -76,6 +99,7 @@ void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode
 void DGD_WritePin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level)
 {
 #ifndef UNIT_TEST
+	// We don't want unit test (which runs on host pc) to modify memory outside the virtual GPIO port.
 	// Select appropriate GPIO Port base address
 	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
 #endif
@@ -94,6 +118,7 @@ void DGD_WritePin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level)
 uint8_t DGD_ReadPin(DGD_Port_enum port, uint8_t pin)
 {
 #ifndef UNIT_TEST
+	// We don't want unit test (which runs on host pc) to modify memory outside the virtual GPIO port.
 	// Select appropriate GPIO Port base address
 	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
 #endif
@@ -151,13 +176,14 @@ unit_static int DGD_Select_Port_BaseAddress(DGD_GPIO_Port_t* activeGPIOhandle, D
 *      Functions in this section are only to be used for unit testing internal functionality of module
 *      !DO NOT USE IN PRODUCTION CODE!
 ***************************************************************************************************/
-/* Only used for unit testing internal functionality of module */
-/* !DO NOT USE IN PRODUCTION CODE! */
+
+/* Allow activeGPIOhandle to be changed by outside world */
 unit_static void UT_SetActiveGPIOhandle(DGD_GPIO_Port_t* newHandle)
 {
 	activeGPIOhandle = *newHandle;
 }
 
+/* Expose activeGPIOhandle to outside world */
 unit_static DGD_GPIO_Port_t* UT_GetActiveGPIOhandle()
 {
 	return &activeGPIOhandle;

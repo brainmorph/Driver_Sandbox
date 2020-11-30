@@ -186,3 +186,7 @@ DGD_ReadPin(enum port, pin)
 
 
 Just as a comparison point, looking through my old flight controller project, I didn't do a great job of defining the interfaces clearly out of modules.  There's so much overlap, i.e. motorControl.c has a PUBLIC function named GatherSensorData()... no way does that make sense.  I'm inputting sensor aquisition logic into the motorControl driver... no.  Now it MAY be possible that I meant this function to be internal and private to the motorControl, but if that's the case I totally forgot to prefix it as "static".  Yeah, either way I look at it, the lesson is that motorControl seems to have logic associated with sensor data and that just doesn't make sense.  So I am learning!  Yaya!
+
+So I've written WritePin() and ReadPin() and I've also written the unit tests for that.  It would be good to actually pull out hardware and test if real pins are being utilized correctly.
+
+Let's try to set PB5 to output mode.  And try to toggle it.  It's hooked up to my saleae

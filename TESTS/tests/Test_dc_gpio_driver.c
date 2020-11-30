@@ -36,6 +36,7 @@ TEST_SETUP(dc_gpio_driver) // This runs before every test
 	virtual_port.IDR = 0x0;
 
 	virtual_gpio_handle.portRegisters = &virtual_port;
+	virtual_gpio_handle.portClock = &virtual_register;
 
 	UT_SetActiveGPIOhandle(&virtual_gpio_handle); // inject virtual GPIO handle into driver
 }
@@ -93,6 +94,25 @@ TEST(dc_gpio_driver, ClearBit)
 	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_register, bitToTest));
 }
 
+
+TEST(dc_gpio_driver, DGD_InitPort)
+{
+	printf("AHB1ENR = %x \n", *virtual_gpio_handle.portClock);
+
+	// Check RCC AHB1ENR for PORTA
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(*virtual_gpio_handle.portClock, 0));
+	DGD_InitPort(PORTA);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(*virtual_gpio_handle.portClock, 0));
+
+	printf("AHB1ENR = %x \n", *virtual_gpio_handle.portClock);
+
+	// Check RCC AHB1ENR for PORTB
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(*virtual_gpio_handle.portClock, 1));
+	DGD_InitPort(PORTB);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(*virtual_gpio_handle.portClock, 1));
+
+	printf("AHB1ENR = %x \n", *virtual_gpio_handle.portClock);
+}
 
 
 //TEST(dc_gpio_driver, InitializeGPIOPort)
