@@ -190,7 +190,6 @@ TEST(dc_gpio_driver, DGD_Select_Port_BaseAddress)
 
 TEST(dc_gpio_driver, DGD_Set_GPIO_Direction)
 {
-
 	uint8_t bitToTest = 0;
 
 	// Test input mode
@@ -208,4 +207,46 @@ TEST(dc_gpio_driver, DGD_Set_GPIO_Direction)
 	bitToTest = 1;
 	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
 	printf("MODER set to output: %x\n", virtual_gpio_handle.portRegisters->MODER);
+}
+
+TEST(dc_gpio_driver, DGD_WritePin)
+{
+	uint8_t bitToTest = 0;
+
+	/* DGD_WritePin uses the BSRR register which is Write Only but I can still make sure the correct pin is being written to
+	 * even though technically the real BSRR register can't be read back.  I'm using a virtual register here.
+	 * BSRR register is funky... read documentation.  You need to offset bit pin by 16 when checking if the CLEAR bit
+	 * functionality of BSRR register was used.*/
+	bitToTest = 0;
+	DGD_WritePin(PORTA, bitToTest, LOW);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->BSRR, bitToTest + 16)); // offset by 16 to check CLEAR bits
+	DGD_WritePin(PORTA, bitToTest, HIGH);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->BSRR, bitToTest)); // no need for offset when checking SET bits
+
+	bitToTest = 5;
+	DGD_WritePin(PORTA, bitToTest, LOW);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->BSRR, bitToTest + 16)); // offset by 16 to check CLEAR bits
+	DGD_WritePin(PORTA, bitToTest, HIGH);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->BSRR, bitToTest)); // no need for offset when checking SET bits
+
+	// Check for failure when not using DGD_WritePin
+	virtual_gpio_handle.portRegisters->BSRR = 0x0; // reset BSRR register
+	bitToTest = 0;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->BSRR, bitToTest + 16));
+	DGD_WritePin(PORTA, bitToTest, LOW);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->BSRR, bitToTest + 16));
+}
+
+TEST(dc_gpio_driver, DGD_ReadPin)
+{
+	uint8_t bitToTest;
+
+	bitToTest = 0;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->IDR, bitToTest));
+	TEST_ASSERT_EQUAL(0, DGD_ReadPin(PORTA, bitToTest)); // ensure ReadPin works
+	// force IDR bit to a certain state even though IDR register is technically Read Only
+	DGD_SetBit(&virtual_gpio_handle.portRegisters->IDR, bitToTest);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->IDR, bitToTest)); // ensure bit is set properly
+	TEST_ASSERT_EQUAL(1, DGD_ReadPin(PORTA, bitToTest)); // ensure ReadPin works
+
 }

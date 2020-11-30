@@ -91,12 +91,21 @@ void DGD_WritePin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level)
 	}
 }
 
-void DGD_ReadPin(DGD_Port_enum port, uint8_t pin)
+uint8_t DGD_ReadPin(DGD_Port_enum port, uint8_t pin)
 {
+#ifndef UNIT_TEST
+	// Select appropriate GPIO Port base address
+	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
+#endif
 
+	uint8_t value = (activeGPIOhandle.portRegisters->IDR >> pin) & 0x1;
+
+	return value;
 }
 
-
+/*
+ * Use enum as a way to set base address of the GPIO port inside the GPIO handle
+ */
 unit_static int DGD_Select_Port_BaseAddress(DGD_GPIO_Port_t* activeGPIOhandle, DGD_Port_enum port)
 {
 	switch(port)
