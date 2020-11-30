@@ -208,25 +208,33 @@ TEST(dc_gpio_driver, DGD_Select_Port_BaseAddress)
 	TEST_ASSERT_EQUAL(temp, virtual_gpio_handle.portRegisters);
 }
 
-TEST(dc_gpio_driver, DGD_Set_GPIO_Direction)
+TEST(dc_gpio_driver, DGD_SetPinDirection)
 {
 	uint8_t bitToTest = 0;
 
 	// Test input mode
-	DGD_SetPinDirection(PORTA, 0, INPUT);
 	bitToTest = 0;
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
+	DGD_SetPinDirection(PORTA, bitToTest, INPUT);
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest * 2));
 	bitToTest = 1;
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
-	printf("MODER set to input: %x\n", virtual_gpio_handle.portRegisters->MODER);
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest * 2 + 1));
+	printf("MODER set to input: 0x%x\n", virtual_gpio_handle.portRegisters->MODER);
 
 	// Test output mode
-	DGD_SetPinDirection(PORTA, 0, OUTPUT);
 	bitToTest = 0;
-	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
+	DGD_SetPinDirection(PORTA, bitToTest, OUTPUT);
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest * 2));
 	bitToTest = 1;
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest));
-	printf("MODER set to output: %x\n", virtual_gpio_handle.portRegisters->MODER);
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest * 2 + 1));
+	printf("MODER set to output: 0x%x\n", virtual_gpio_handle.portRegisters->MODER);
+
+	DGD_SetPinDirection(PORTB, 5, OUTPUT);
+	bitToTest = 5;
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest * 2));
+	bitToTest = 1;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->MODER, bitToTest * 2 + 1));
+	printf("MODER set to output: 0x%x\n", virtual_gpio_handle.portRegisters->MODER);
+
 }
 
 TEST(dc_gpio_driver, DGD_WritePin)

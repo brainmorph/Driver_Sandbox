@@ -12,7 +12,7 @@ TEST_GROUP_RUNNER(dc_gpio_driver)
 
 	RUN_TEST_CASE(dc_gpio_driver, DGD_Select_Port_BaseAddress);
 
-	RUN_TEST_CASE(dc_gpio_driver, DGD_Set_GPIO_Direction);
+	RUN_TEST_CASE(dc_gpio_driver, DGD_SetPinDirection);
 	RUN_TEST_CASE(dc_gpio_driver, DGD_WritePin);
 	RUN_TEST_CASE(dc_gpio_driver, DGD_ReadPin);
 }

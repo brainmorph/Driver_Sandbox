@@ -189,4 +189,4 @@ Just as a comparison point, looking through my old flight controller project, I 
 
 So I've written WritePin() and ReadPin() and I've also written the unit tests for that.  It would be good to actually pull out hardware and test if real pins are being utilized correctly.
 
-Let's try to set PB5 to output mode.  And try to toggle it.  It's hooked up to my saleae
+Let's try to set PB5 to output mode.  And try to toggle it.  It's hooked up to my saleae.

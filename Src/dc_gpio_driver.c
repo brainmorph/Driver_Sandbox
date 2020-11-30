@@ -84,14 +84,14 @@ void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode
 	if(mode == OUTPUT)
 	{
 		// Set MODER bits to output mode
-		DGD_SetBit(&(activeGPIOhandle.portRegisters->MODER), 0);
-		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), 1);
+		DGD_SetBit(&(activeGPIOhandle.portRegisters->MODER), pin * 2);
+		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), pin * 2 + 1);
 	}
 	else if(mode == INPUT)
 	{
 		// Set MODER bits to input mode
-		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), 0);
-		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), 1);
+		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), pin * 2);
+		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), pin * 2 + 1);
 	}
 }
 

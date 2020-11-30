@@ -23,6 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "dc_gpio_driver.h"
 
 /* USER CODE END Includes */
 
@@ -87,6 +88,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
+  DGD_InitPort(PORTB);
+
+  DGD_SetPinDirection(PORTB, 5, OUTPUT);
+
+  DGD_WritePin(PORTB, 5, LOW);
+
 
   /* USER CODE END 2 */
 
@@ -95,8 +102,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
+	  DGD_WritePin(PORTB, 5, LOW);
+	  DGD_WritePin(PORTB, 5, HIGH);
   }
   /* USER CODE END 3 */
 }
