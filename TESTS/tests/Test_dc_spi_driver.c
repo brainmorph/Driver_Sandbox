@@ -30,7 +30,16 @@ TEST_SETUP(dc_spi_driver) // This runs before every test
 	//printf("Setting up test...\n");
 	virtual_register = 0x0;
 
+	// Zero out virtual registers
 	virtual_SPI_registers.CR1 = 0x0;
+	virtual_SPI_registers.CR2 = 0x0;
+	virtual_SPI_registers.SR = 0x0;
+	virtual_SPI_registers.DR = 0x0;
+	virtual_SPI_registers.CRCPR = 0x0;
+	virtual_SPI_registers.RXCRCR = 0x0;
+	virtual_SPI_registers.TXCRCR = 0x0;
+	virtual_SPI_registers.I2SCFGR = 0x0;
+	virtual_SPI_registers.I2SCFGR = 0x0;
 
 	virtual_SPI_handle.registers = &virtual_SPI_registers;
 	virtual_SPI_handle.clock = &virtual_register;
@@ -58,4 +67,5 @@ TEST(dc_spi_driver, DSD_InitSPI)
 	TEST_ASSERT_EQUAL(1, CHECK_BIT(*virtual_SPI_handle.clock, 12));
 	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_SPI_handle.registers->CR1, 2));
 	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_SPI_handle.registers->CR1, 6));
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_SPI_handle.registers->CR1, 11));
 }

@@ -31,9 +31,17 @@ TEST_SETUP(dc_gpio_driver) // This runs before every test
 	//printf("Setting up test...\n");
 	virtual_register = 0x0;
 
+	// Zero out virtual registers
 	virtual_port.MODER = 0x0;
-	virtual_port.BSRR = 0x0;
+	virtual_port.OTYPER = 0x0;
+	virtual_port.OSPEEDR = 0x0;
+	virtual_port.PUPDR = 0x0;
 	virtual_port.IDR = 0x0;
+	virtual_port.ODR = 0x0;
+	virtual_port.BSRR = 0x0;
+	virtual_port.LCKR = 0x0;
+	virtual_port.AFR[0] = 0x0;
+	virtual_port.AFR[1] = 0x0;
 
 	virtual_gpio_handle.portRegisters = &virtual_port;
 	virtual_gpio_handle.portClock = &virtual_register;
