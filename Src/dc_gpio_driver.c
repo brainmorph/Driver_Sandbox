@@ -73,7 +73,7 @@ void DGD_InitPort(DGD_Port_enum port)
 }
 
 
-void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode)
+void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Direction_enum direction)
 {
 #ifndef UNIT_TEST
 	// We don't want unit test (which runs on host pc) to modify memory outside the virtual GPIO port.
@@ -81,13 +81,13 @@ void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode
 	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
 #endif
 
-	if(mode == OUTPUT)
+	if(direction == OUTPUT)
 	{
 		// Set MODER bits to output mode
 		DGD_SetBit(&(activeGPIOhandle.portRegisters->MODER), pin * 2);
 		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), pin * 2 + 1);
 	}
-	else if(mode == INPUT)
+	else if(direction == INPUT)
 	{
 		// Set MODER bits to input mode
 		DGD_ClearBit(&(activeGPIOhandle.portRegisters->MODER), pin * 2);

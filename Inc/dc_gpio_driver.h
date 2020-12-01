@@ -49,7 +49,7 @@ typedef enum
 {
 	INPUT = 0,
 	OUTPUT = 1,
-}DGD_Pin_Mode_enum;
+}DGD_Pin_Direction_enum;
 
 
 
@@ -84,7 +84,7 @@ void DGD_ClearBit(volatile uint32_t *address, uint8_t bit);
 
 void DGD_InitPort(DGD_Port_enum port);
 
-void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Mode_enum mode);
+void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Direction_enum mode);
 void DGD_WritePin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level);
 uint8_t DGD_ReadPin(DGD_Port_enum port, uint8_t pin);
 
