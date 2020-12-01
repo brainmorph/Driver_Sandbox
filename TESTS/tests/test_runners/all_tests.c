@@ -4,6 +4,7 @@
 static void RunAllTests(void)
 {
   RUN_TEST_GROUP(dc_gpio_driver);
+  RUN_TEST_GROUP(dc_spi_driver);
 }
 
 int main(int argc, const char * argv[])
