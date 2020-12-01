@@ -15,4 +15,6 @@ TEST_GROUP_RUNNER(dc_gpio_driver)
 	RUN_TEST_CASE(dc_gpio_driver, DGD_SetPinDirection);
 	RUN_TEST_CASE(dc_gpio_driver, DGD_WritePin);
 	RUN_TEST_CASE(dc_gpio_driver, DGD_ReadPin);
+
+	RUN_TEST_CASE(dc_gpio_driver, DGD_SetPinAlternateFunction);
 }

@@ -87,6 +87,7 @@ void DGD_InitPort(DGD_Port_enum port);
 void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Direction_enum mode);
 void DGD_WritePin(DGD_Port_enum port, uint8_t pin, DGD_Pin_Level_enum level);
 uint8_t DGD_ReadPin(DGD_Port_enum port, uint8_t pin);
+void DGD_SetPinAlternateFunction(DGD_Port_enum port, uint8_t pin, uint8_t alternateFunction);
 
 
 #endif /* DC_GPIO_DRIVER_H_ */

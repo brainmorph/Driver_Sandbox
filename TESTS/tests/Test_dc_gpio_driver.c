@@ -43,6 +43,7 @@ TEST_SETUP(dc_gpio_driver) // This runs before every test
 	virtual_port.AFR[0] = 0x0;
 	virtual_port.AFR[1] = 0x0;
 
+	// Attach virtual registers to handle
 	virtual_gpio_handle.portRegisters = &virtual_port;
 	virtual_gpio_handle.portClock = &virtual_register;
 
@@ -280,9 +281,63 @@ TEST(dc_gpio_driver, DGD_ReadPin)
 	bitToTest = 0;
 	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->IDR, bitToTest));
 	TEST_ASSERT_EQUAL(0, DGD_ReadPin(PORTA, bitToTest)); // ensure ReadPin works
-	// force IDR bit to a certain state even though IDR register is technically Read Only
+	// force virtual IDR bit to a certain state even though hardware IDR register is technically Read Only
 	DGD_SetBit(&virtual_gpio_handle.portRegisters->IDR, bitToTest);
 	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->IDR, bitToTest)); // ensure bit is set properly
 	TEST_ASSERT_EQUAL(1, DGD_ReadPin(PORTA, bitToTest)); // ensure ReadPin works
+
+}
+
+TEST(dc_gpio_driver, DGD_SetPinAlternateFunction)
+{
+	uint8_t bitToTest;
+
+	printf("initial AFR[0] = 0x%x \n", virtual_gpio_handle.portRegisters->AFR[0]);
+
+	bitToTest = 12;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[0], bitToTest));
+	bitToTest = 13;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[0], bitToTest));
+	bitToTest = 14;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[0], bitToTest));
+	bitToTest = 15;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[0], bitToTest));
+
+	DGD_SetPinAlternateFunction(PORTB, 3, 5);
+
+	printf("after AFR[0] = 0x%x \n", virtual_gpio_handle.portRegisters->AFR[0]);
+
+	// Check that correct bit pattern was set
+	bitToTest = 12;
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[0], bitToTest));
+	bitToTest = 13;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[0], bitToTest));
+	bitToTest = 14;
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[0], bitToTest));
+	bitToTest = 15;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[0], bitToTest));
+
+
+
+	// Test that AFR[1] works as well for the higher pins
+
+	printf("initial AFR[1] = 0x%x \n", virtual_gpio_handle.portRegisters->AFR[1]);
+
+	DGD_SetPinAlternateFunction(PORTB, 15, 5); // test pin 15
+
+	printf("after AFR[1] = 0x%x \n", virtual_gpio_handle.portRegisters->AFR[1]);
+
+	// Check that correct bit pattern was set
+	bitToTest = 28;
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[1], bitToTest));
+	bitToTest = 29;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[1], bitToTest));
+	bitToTest = 30;
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[1], bitToTest));
+	bitToTest = 31;
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_gpio_handle.portRegisters->AFR[1], bitToTest));
+
+
+
 
 }

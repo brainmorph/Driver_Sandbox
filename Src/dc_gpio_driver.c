@@ -72,7 +72,6 @@ void DGD_InitPort(DGD_Port_enum port)
 	}
 }
 
-
 void DGD_SetPinDirection(DGD_Port_enum port, uint8_t pin, DGD_Pin_Direction_enum direction)
 {
 #ifndef UNIT_TEST
@@ -168,6 +167,28 @@ unit_static int DGD_Select_Port_BaseAddress(DGD_GPIO_Port_t* activeGPIOhandle, D
 	}
 
 	return 0;
+}
+
+
+void DGD_SetPinAlternateFunction(DGD_Port_enum port, uint8_t pin, uint8_t alternateFunction)
+{
+#ifndef UNIT_TEST
+	// We don't want unit test (which runs on host pc) to modify memory outside the virtual GPIO port.
+	// Select appropriate GPIO Port base address
+	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
+#endif
+
+
+	if((pin <= 7) && (pin >= 0))
+	{
+		// use AFR low register
+		activeGPIOhandle.portRegisters->AFR[0] |= alternateFunction << (pin * 4);
+	}
+	else if((pin <= 15) && (pin >= 8))
+	{
+		// use AFR high register
+		activeGPIOhandle.portRegisters->AFR[1] |= alternateFunction << ((pin - 8) * 4);
+	}
 }
 
 
