@@ -178,7 +178,11 @@ void DGD_SetPinAlternateFunction(DGD_Port_enum port, uint8_t pin, uint8_t altern
 	DGD_Select_Port_BaseAddress(&activeGPIOhandle, port);
 #endif
 
+	// Modify GPIOx_MODER
+	DGD_ClearBit(&activeGPIOhandle.portRegisters->MODER, pin * 2);
+	DGD_SetBit(&activeGPIOhandle.portRegisters->MODER, pin * 2 + 1);
 
+	// Modify GPIOx_AFRL/H
 	if((pin <= 7) && (pin >= 0))
 	{
 		// use AFR low register

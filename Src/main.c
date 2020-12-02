@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "dc_gpio_driver.h"
+#include "dc_spi_driver.h"
 
 /* USER CODE END Includes */
 
@@ -88,11 +89,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
+
+  // Setup GPIO
   DGD_InitPort(PORTB);
 
   DGD_SetPinDirection(PORTB, 5, OUTPUT);
-
   DGD_WritePin(PORTB, 5, LOW);
+
+  // Setup SPI1
+  DSD_InitSPI();
+  DGD_SetPinAlternateFunction(PORTB, 3, 5); // Set PortB Pin 3 as SPI1 function (SCK)
+  DGD_SetPinAlternateFunction(PORTB, 5, 5); // Set PortB Pin 5 as SPI1 function (MOSI)
 
 
   /* USER CODE END 2 */
@@ -105,6 +112,8 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  DGD_WritePin(PORTB, 5, LOW);
 	  DGD_WritePin(PORTB, 5, HIGH);
+
+
   }
   /* USER CODE END 3 */
 }
