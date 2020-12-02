@@ -52,6 +52,11 @@ void DSD_InitSPI()
 	DSD_SetBit(&activeSPIhandle.registers->CR1, 6);
 }
 
+void DSD_SendTestSPI()
+{
+	activeSPIhandle.registers->DR = 0xA5;
+}
+
 
 
 

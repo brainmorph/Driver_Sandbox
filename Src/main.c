@@ -97,9 +97,9 @@ int main(void)
   DGD_WritePin(PORTB, 5, LOW);
 
   // Setup SPI1
-  DSD_InitSPI();
   DGD_SetPinAlternateFunction(PORTB, 3, 5); // Set PortB Pin 3 as SPI1 function (SCK)
   DGD_SetPinAlternateFunction(PORTB, 5, 5); // Set PortB Pin 5 as SPI1 function (MOSI)
+  DSD_InitSPI();
 
 
   /* USER CODE END 2 */
@@ -113,6 +113,7 @@ int main(void)
 	  DGD_WritePin(PORTB, 5, LOW);
 	  DGD_WritePin(PORTB, 5, HIGH);
 
+	  DSD_SendTestSPI();
 
   }
   /* USER CODE END 3 */

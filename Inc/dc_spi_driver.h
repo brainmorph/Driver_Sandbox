@@ -58,5 +58,7 @@ void DSD_ClearBit(volatile uint32_t *address, uint8_t bit);
 
 void DSD_InitSPI();
 
+void DSD_SendTestSPI();
+
 
 #endif /* DC_SPI_DRIVER_H_ */
