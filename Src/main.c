@@ -92,6 +92,7 @@ int main(void)
 
   // Setup GPIO
   DGD_InitPort(PORTB);
+  DGD_InitPort(PORTA);
 
   DGD_SetPinDirection(PORTB, 5, OUTPUT);
   DGD_WritePin(PORTB, 5, LOW);
@@ -99,6 +100,7 @@ int main(void)
   // Setup SPI1
   DGD_SetPinAlternateFunction(PORTB, 3, 5); // Set PortB Pin 3 as SPI1 function (SCK)
   DGD_SetPinAlternateFunction(PORTB, 5, 5); // Set PortB Pin 5 as SPI1 function (MOSI)
+  //DGD_SetPinAlternateFunction(PORTA, 4, 5); // Set PORTA Pin 4 as SPI1 funtion (NSS)
   DSD_InitSPI();
 
 
@@ -114,6 +116,8 @@ int main(void)
 	  DGD_WritePin(PORTB, 5, HIGH);
 
 	  DSD_SendTestSPI();
+
+	  HAL_Delay(8);
 
   }
   /* USER CODE END 3 */

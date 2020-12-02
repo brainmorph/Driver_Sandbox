@@ -48,6 +48,12 @@ void DSD_InitSPI()
 	// Set MASTER mode
 	DSD_SetBit(&activeSPIhandle.registers->CR1, 2);
 
+	// Set clock prescalar
+	DSD_SetBit(&activeSPIhandle.registers->CR1, 5); // divide by 32
+
+	// Set NSS to hardware output mode (seems necessary but not sure why)
+	DSD_SetBit(&activeSPIhandle.registers->CR2, 2);
+
 	// Enable SPI1
 	DSD_SetBit(&activeSPIhandle.registers->CR1, 6);
 }
