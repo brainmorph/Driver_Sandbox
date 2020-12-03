@@ -219,3 +219,35 @@ The tasks that depend on eachother to happen at the same time are... gathering s
 At this point, I can transition to RTOS and try to set it all up... but genuinelyl don't want to do that yet.  I want to stay on the topic of unit testing basic functionality.  
 
 I can start work on the PID.  But the fibers in my being tell me that I should transition to writing the SPI driver instead.  Ok I'll start out with constructing the SPI power point.
+
+
+-------------------------------------------------------------------------------------------
+
+12:27 PM 12/2/2020
+
+Yesterday I actually got to a working version of the SPI driver.  I can send data out of MOSI and SCK.  Haven't tested MISO yet.
+
+One immediate concern is I'm unclear about how to set the clock properly.  There are a few bits for a clock divider (I'm guessing a divider for APB2 clock but honestly I'm not sure).
+	fPCLK ... what is it?  It's a divider for this clock.
+	According to documentation fPCLK1 and 2 are internal APB1 and APB2 respectively.
+	-> Well I know SPI1 is on APB2 so I'm going to go with that.
+		--> fPCLK2 max (APB2) is apparently 84MHz
+		--> I don't have a good way to see the current APB2 frequency... 
+		--> but I do know my current SPI SCK is running at... 500kHz by confirming with logic analyzer
+		--> I also know my SPI divider is set to 32
+			--> This means APB2 = 32 * 500 kHz = 16MHz .  Is this correct?
+			--> Yes sir, this is correct.  I never touched the default CubeMX setup and CubeMX claims APB2 is at 16MHz by default.  Sweet!
+
+Well I can modulate 16 MHz for now, just divide it down.  I don't think I need anything faster.  The only real issue is I can only do powers of 2 as the dividers... is that ok?
+
+
+
+-------------------------------------------------------------------------------------------
+
+4:52 PM 12/3/2020
+
+I noticed my nRF24L01 radio can do SPI from 0 to 8 Mbps.  Considering my APB2 clock runs at 16 MHz, I can divide it by two and max out my SPI comms.
+
+But to be safe, I'll divide by 4 and run at 4 Mbps... confirm with scope.  This frequency will also put it barely in range for my scope to be able to read.
+
+Oh yes.  It runs perfectly, no problems here.
