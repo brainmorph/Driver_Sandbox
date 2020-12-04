@@ -69,3 +69,24 @@ TEST(dc_spi_driver, DSD_InitSPI)
 	TEST_ASSERT_EQUAL(1, CHECK_BIT(virtual_SPI_handle.registers->CR1, 6));
 	TEST_ASSERT_EQUAL(0, CHECK_BIT(virtual_SPI_handle.registers->CR1, 11));
 }
+
+TEST(dc_spi_driver, DSD_SendBytes)
+{
+	// Check correct number of bytes are processed in the function
+	uint8_t numBytes = 23;
+	uint8_t dummyBytes[numBytes];
+	int value = DSD_SendBytes(dummyBytes, numBytes);
+	TEST_ASSERT_EQUAL(numBytes, value);
+	printf("Bytes written = %d\n", numBytes);
+
+	// Check correct number of bytes are processed in the function
+	numBytes = 155;
+	dummyBytes[numBytes];
+	value = DSD_SendBytes(dummyBytes, numBytes);
+	TEST_ASSERT_EQUAL(numBytes, value);
+	printf("Bytes written = %d\n", numBytes);
+	// Check last byte written to SPI_DR is the last byte in the buffer
+	TEST_ASSERT_EQUAL(dummyBytes[numBytes - 1], (uint8_t)virtual_SPI_handle.registers->DR);
+	printf("Last byte in buffer = 0x%x\n", dummyBytes[numBytes - 1]);
+	printf("Last byte written = 0x%x\n", (uint8_t)virtual_SPI_handle.registers->DR);
+}

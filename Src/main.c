@@ -115,7 +115,10 @@ int main(void)
 	  DGD_WritePin(PORTB, 5, LOW);
 	  DGD_WritePin(PORTB, 5, HIGH);
 
-	  DSD_SendTestSPI();
+	  //DSD_SendTestSPI();
+
+	  uint8_t buffer[10] = {0, 0xa, 0, 0xa, 0, 0xa, 0, 0xa, 0, 0xa};
+	  DSD_SendBytes(buffer, sizeof(buffer)/sizeof(buffer[0]));
 
 	  HAL_Delay(8);
 

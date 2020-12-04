@@ -18,7 +18,8 @@ CFLAGS += -Wall
 
 
 INC_H_DIR = ../Inc
-INC_ALL = $(INC_H_DIR)
+INC_HAL_DIR = $(shell find ../Drivers/STM32F4xx_HAL_Driver/ -type d -print)
+INC_ALL = $(INC_H_DIR) $(INC_HAL_DIR)
 
 INC_DIR = $(addprefix -I, $(INC_ALL))
 
