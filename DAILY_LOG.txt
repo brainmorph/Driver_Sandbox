@@ -251,3 +251,5 @@ I noticed my nRF24L01 radio can do SPI from 0 to 8 Mbps.  Considering my APB2 cl
 But to be safe, I'll divide by 4 and run at 4 Mbps... confirm with scope.  This frequency will also put it barely in range for my scope to be able to read.
 
 Oh yes.  It runs perfectly, no problems here.
+
+Figured out that if I wait for TXE bit to be set in SPI_SR register, I can send bytes one after another.  It's much better than using HAL_Delay(1) which adds way too much delay.  This seems to be instantaneous, though I am having to wait for the bit to be set some some processor cycles are wasted inside the while loop.  But, at the very least, this is proof of concept.  Needs to be cleaned up though.

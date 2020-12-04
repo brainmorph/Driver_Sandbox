@@ -9,6 +9,7 @@
 *     Include Files
 **********************************************************************/
 #include "dc_spi_driver.h"
+#include "stm32f4xx_hal.h" // useful for HAL_Delay()
 
 
 /***************************************************************************************************
@@ -20,16 +21,22 @@ static DSD_SPI_t activeSPIhandle;
 /***************************************************************************************************
 *      Global Function Definitions
 ***************************************************************************************************/
-void DSD_SetBit(volatile uint32_t *address, uint8_t bit)
+inline void DSD_SetBit(volatile uint32_t* address, uint8_t bit)
 {
 	*address |= (1 << bit);
 }
 
-void DSD_ClearBit(volatile uint32_t *address, uint8_t bit)
+inline void DSD_ClearBit(volatile uint32_t* address, uint8_t bit)
 {
 	uint32_t temp = 0;
 	temp |= (1 << bit);
 	*address &= ~temp;
+}
+
+inline uint8_t DSD_GetBit(volatile uint32_t* address, uint8_t bit)
+{
+	uint8_t value = (*address >> bit) & 0x1;
+	return value;
 }
 
 
@@ -49,7 +56,7 @@ void DSD_InitSPI()
 	DSD_SetBit(&activeSPIhandle.registers->CR1, 2);
 
 	// Set clock prescalar
-	DSD_SetBit(&activeSPIhandle.registers->CR1, 3); // divide by 4
+	DSD_SetBit(&activeSPIhandle.registers->CR1, 4); // divide by 8
 
 	// Set NSS to hardware output mode (seems necessary but not sure why)
 	DSD_SetBit(&activeSPIhandle.registers->CR2, 2);
@@ -60,7 +67,55 @@ void DSD_InitSPI()
 
 void DSD_SendTestSPI()
 {
+	// Send test byte
 	activeSPIhandle.registers->DR = 0xA5;
+
+	HAL_Delay(5);
+
+	// Try to send a buffer of data.
+	activeSPIhandle.registers->DR = 0x81;
+	while(!DSD_GetBit(&activeSPIhandle.registers->SR, 1))
+	{
+		// Do nothing
+		asm("NOP");
+	}
+
+	activeSPIhandle.registers->DR = 0x42;
+	while(!DSD_GetBit(&activeSPIhandle.registers->SR, 1))
+	{
+		// Do nothing
+		asm("NOP");
+	}
+
+	activeSPIhandle.registers->DR = 0x24;
+	while(!DSD_GetBit(&activeSPIhandle.registers->SR, 1))
+	{
+		// Do nothing
+		asm("NOP");
+	}
+
+	activeSPIhandle.registers->DR = 0x18;
+	while(!DSD_GetBit(&activeSPIhandle.registers->SR, 1))
+	{
+		// Do nothing
+		asm("NOP");
+	}
+
+	activeSPIhandle.registers->DR = 0x24;
+	while(!DSD_GetBit(&activeSPIhandle.registers->SR, 1))
+	{
+		// Do nothing
+		asm("NOP");
+	}
+
+	activeSPIhandle.registers->DR = 0x42;
+	while(!DSD_GetBit(&activeSPIhandle.registers->SR, 1))
+	{
+		// Do nothing
+		asm("NOP");
+	}
+
+	activeSPIhandle.registers->DR = 0x81;
 }
 
 
