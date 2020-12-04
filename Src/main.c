@@ -100,8 +100,9 @@ int main(void)
   // Setup SPI1
   DGD_SetPinAlternateFunction(PORTB, 3, 5); // Set PortB Pin 3 as SPI1 function (SCK)
   DGD_SetPinAlternateFunction(PORTB, 5, 5); // Set PortB Pin 5 as SPI1 function (MOSI)
-  //DGD_SetPinAlternateFunction(PORTA, 4, 5); // Set PORTA Pin 4 as SPI1 funtion (NSS)
-  DSD_InitSPI();
+  //DGD_SetPinAlternateFunction(PORTA, 4, 5); // Set PORTA Pin 4 as SPI1 function (NSS)
+  DGD_SetPinAlternateFunction(PORTB, 4, 5); // Set PortB Pin 4 as SPI1 function (MISO)
+  DSD_InitSPI(); // TODO: the above alternate function settings should be moved INSIDE the InitSPI function
 
 
   /* USER CODE END 2 */
@@ -120,7 +121,16 @@ int main(void)
 	  uint8_t buffer[10] = {0, 0xa, 0, 0xa, 0, 0xa, 0, 0xa, 0, 0xa};
 	  DSD_SendBytes(buffer, sizeof(buffer)/sizeof(buffer[0]));
 
-	  HAL_Delay(8);
+	  static uint8_t count;
+	  DSD_SendBytes(&count, 1);
+
+	  //DSD_ReadByte();
+	  volatile uint8_t valueReceived = DSD_ReadByte();
+	  valueReceived = valueReceived;
+
+	  count++;
+
+	  HAL_Delay(3);
 
   }
   /* USER CODE END 3 */

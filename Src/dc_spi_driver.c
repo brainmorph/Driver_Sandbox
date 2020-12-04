@@ -23,7 +23,7 @@ static DSD_SPI_t activeSPIhandle;
 *     Static Function Declarations
 ***************************************************************************************************/
 static void DSD_WaitForTXE();
-
+static void DSD_WaitForRXNE();
 
 /***************************************************************************************************
 *      Global Function Definitions
@@ -83,6 +83,17 @@ static void DSD_WaitForTXE()
 #endif
 }
 
+static void DSD_WaitForRXNE()
+{
+#ifndef UNIT_TEST
+	while(!DSD_GetBit(&activeSPIhandle.registers->SR, 0))
+	{
+		// Do nothing
+		asm("NOP");
+	}
+#endif
+}
+
 void DSD_SendTestSPI()
 {
 	// Send test byte
@@ -124,12 +135,22 @@ uint8_t DSD_SendBytes(uint8_t* buffer, uint8_t size)
 		activeSPIhandle.registers->DR = buffer[i];
 		DSD_WaitForTXE();
 
+		volatile uint8_t test = DSD_ReadByte();
+		test = test;
+
 		i++;
 	}
 
 	return i; // export i as bytes written
 }
 
+// Returns the byte stored in DR register at the moment
+uint8_t DSD_ReadByte()
+{
+	//DSD_WaitForRXNE();
+	uint8_t value = (activeSPIhandle.registers->DR & 0xFF);
+	return value;
+}
 
 
 
