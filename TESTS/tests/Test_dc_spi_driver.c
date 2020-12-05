@@ -9,6 +9,7 @@
 /***************************************************************************************************
 *     Local Macro Definitions
 ***************************************************************************************************/
+#define NULL ((void *)0)
 #define CHECK_BIT(reg, num) (((reg) >> num) & 0x1)
 
 /***************************************************************************************************
@@ -75,14 +76,14 @@ TEST(dc_spi_driver, DSD_SendBytes)
 	// Check correct number of bytes are processed in the function
 	uint8_t numBytes = 23;
 	uint8_t dummyBytes[numBytes];
-	int value = DSD_SendBytes(dummyBytes, numBytes);
+	int value = DSD_SendBytes(dummyBytes, dummyBytes, numBytes);
 	TEST_ASSERT_EQUAL(numBytes, value);
 	printf("Bytes written = %d\n", numBytes);
 
 	// Check correct number of bytes are processed in the function
 	numBytes = 155;
 	dummyBytes[numBytes];
-	value = DSD_SendBytes(dummyBytes, numBytes);
+	value = DSD_SendBytes(dummyBytes, dummyBytes, numBytes);
 	TEST_ASSERT_EQUAL(numBytes, value);
 	printf("Bytes written = %d\n", numBytes);
 	// Check last byte written to SPI_DR is the last byte in the buffer

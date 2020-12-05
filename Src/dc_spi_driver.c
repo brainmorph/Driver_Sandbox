@@ -14,6 +14,10 @@
 #include "stm32f4xx_hal.h" // useful for HAL_Delay()
 #endif
 
+#ifdef UNIT_TEST
+#include <stddef.h>
+#endif
+
 /***************************************************************************************************
 *     Static Variable Definitions
 ***************************************************************************************************/
@@ -126,17 +130,20 @@ void DSD_SendTestSPI()
 }
 
 
-uint8_t DSD_SendBytes(uint8_t* buffer, uint8_t size)
+uint8_t DSD_SendBytes(uint8_t* txBuffer, uint8_t* rxBuffer, uint8_t size)
 {
+	if(txBuffer == NULL || rxBuffer == NULL)
+		return 0;
+
 	uint8_t i = 0;
 
 	while(i < size)
 	{
-		activeSPIhandle.registers->DR = buffer[i];
+		activeSPIhandle.registers->DR = txBuffer[i];
 		DSD_WaitForTXE();
 
-		volatile uint8_t test = DSD_ReadByte();
-		test = test;
+		DSD_WaitForRXNE();
+		rxBuffer[i] = DSD_ReadByte(); // read what was sent on MISO
 
 		i++;
 	}

@@ -60,7 +60,7 @@ void DSD_InitSPI();
 
 void DSD_SendTestSPI();
 
-uint8_t DSD_SendBytes(uint8_t* buffer, uint8_t size);
+uint8_t DSD_SendBytes(uint8_t* txBuffer, uint8_t* rxBuffer, uint8_t size);
 uint8_t DSD_ReadByte();
 
 
