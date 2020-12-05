@@ -15,16 +15,16 @@ CFLAGS += -Wall
 #CFLAGS += -Wfatal-errors
 #######################################################
 
-
-
+#Applicaion level header files
 INC_H_DIR = ../Inc
+
+#Add header files from sub-directories
 INC_HAL_DIR = $(shell find ../Drivers/STM32F4xx_HAL_Driver/ -type d -print)
-INC_ALL = $(INC_H_DIR) $(INC_HAL_DIR)
+INC_CMSIS := $(shell find ../Drivers/CMSIS/ -type d -print)
 
-INC_DIR = $(addprefix -I, $(INC_ALL))
-
-# Processor specific header files are... complicated.  Add all header files in the CMSIS sub-dirs
-INC_CMSIS := $(addprefix -I,$(shell find ../Drivers/CMSIS/ -type d -print))
+#Combine list of all header files
+INC_ALL = $(INC_H_DIR) $(INC_HAL_DIR) $(INC_CMSIS)
+INC = $(addprefix -I, $(INC_ALL))
 
 SRC_DIR = ../Src
 BLD_DIR = bld
@@ -59,14 +59,18 @@ help:
 
 
 %.o: %.c
-	gcc $(CFLAGS) $(INC_DIR) $(INC_CMSIS) $(UNITY_INC) $(MACRO_DEFINE) -c $< -o $(BLD_DIR)/$(notdir $@)
+	gcc $(CFLAGS) $(INC) $(UNITY_INC) $(MACRO_DEFINE) -c $< -o $(BLD_DIR)/$(notdir $@)
 
+
+#Auto-execute program after compiling
 program: $(LIST_IMPORTANT_FILES:.c=.o) last_step
 	./all_tests.exe
 
-
+#Compile everything into an executable
 last_step:
 	gcc $(CFLAGS) $(BLD_DIR)/* -o all_tests.exe
+
+
 
 # $(BLD_DIR)/dc_hal_spiTest.o: $(TST_DIR)/dc_hal_spiTest.c
 # 	gcc $(CFLAGS) -I$(INC_DIR) $(UNITY_INC) -c $(TST_DIR)/dc_hal_spiTest.c -o $(BLD_DIR)/dc_hal_spiTest.o
