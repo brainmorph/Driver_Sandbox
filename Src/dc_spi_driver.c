@@ -129,7 +129,7 @@ void DSD_SendTestSPI()
 	activeSPIhandle.registers->DR = 0x81;
 }
 
-
+// Send txBuffer to MOSI and fill in the rxBuffer with data coming from MISO
 uint8_t DSD_SendBytes(uint8_t* txBuffer, uint8_t* rxBuffer, uint8_t size)
 {
 	if(txBuffer == NULL || rxBuffer == NULL)
