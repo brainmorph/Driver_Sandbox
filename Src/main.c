@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "dc_gpio_driver.h"
 #include "dc_spi_driver.h"
+#include "dc_rfm95_driver.h"
 
 /* USER CODE END Includes */
 
@@ -111,19 +112,9 @@ int main(void)
   {
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
-	  DGD_WritePin(PORTB, 5, LOW);
-	  DGD_WritePin(PORTB, 5, HIGH);
 
-	  //DSD_SendTestSPI();
-
-	  uint8_t txBuffer[2] = {0x06, 0xa5};
-	  uint8_t rxBuffer[2];
-	  DSD_SendBytes(txBuffer, rxBuffer, 2);
-
-	  static uint8_t count;
-	  DSD_SendBytes(&count, rxBuffer, 1);
-
-	  count++;
+	  uint8_t result = DRD_ReadRegister(DRD_RFM95_REG_06_FRF_MSB);
+	  result = result;
 
 	  HAL_Delay(3);
 

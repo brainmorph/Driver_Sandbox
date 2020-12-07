@@ -39,12 +39,15 @@ UNITY_INC = -Iunity/src \
 #Add locations of each source file that needs to be built
 LIST_IMPORTANT_FILES = $(TST_DIR)/Test_dc_gpio_driver.c \
 						$(TST_DIR)/Test_dc_spi_driver.c \
+						$(TST_DIR)/Test_dc_rfm95_driver.c \
 						$(TST_DIR)/test_runners/all_tests.c \
 						$(TST_DIR)/test_runners/TestRunner_dc_gpio_driver.c \
 						$(TST_DIR)/test_runners/TestRunner_dc_spi_driver.c \
+						$(TST_DIR)/test_runners/TestRunner_dc_rfm95_driver.c \
 						$(UNITY_DIR)/extras/fixture/src/unity_fixture.c \
 						$(SRC_DIR)/dc_gpio_driver.c \
 						$(SRC_DIR)/dc_spi_driver.c \
+						$(SRC_DIR)/dc_rfm95_driver.c \
 						$(UNITY_DIR)/src/unity.c \
 
 
