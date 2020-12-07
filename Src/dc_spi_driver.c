@@ -145,7 +145,7 @@ uint8_t DSD_SendBytes(uint8_t* txBuffer, uint8_t* rxBuffer, uint8_t size)
 
 
 	/* Send data */
-	DGD_WritePin(PORTA, 4, LOW); // assert NSS
+	DGD_WritePin(PORTA, 4, LOW); // push NSS down
 
 	while(i < size)
 	{

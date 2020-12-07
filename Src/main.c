@@ -116,6 +116,17 @@ int main(void)
 	  uint8_t result = DRD_ReadRegister(DRD_RFM95_REG_06_FRF_MSB);
 	  result = result;
 
+	  result = DRD_ReadRegister(DRD_RFM95_REG_07_FRF_MID);
+
+
+
+	  result = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
+	  DRD_SetModeIdle();
+	  result = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
+	  DRD_SetModeSleep();
+	  result = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
+	  DRD_SetModeIdle();
+
 	  HAL_Delay(3);
 
   }
