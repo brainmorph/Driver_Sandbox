@@ -9,6 +9,7 @@
 *     Include Files
 **********************************************************************/
 #include "dc_spi_driver.h"
+#include "dc_gpio_driver.h"
 
 #ifndef UNIT_TEST
 #include "stm32f4xx_hal.h" // useful for HAL_Delay()
@@ -74,6 +75,10 @@ void DSD_InitSPI()
 
 	// Enable SPI1
 	DSD_SetBit(&activeSPIhandle.registers->CR1, 6);
+
+	// Use PORTA Pin 4 as GPIO NSS
+	DGD_SetPinDirection(PORTA, 4, OUTPUT);
+	DGD_WritePin(PORTA, 4, HIGH);
 }
 
 static void DSD_WaitForTXE()
@@ -132,10 +137,15 @@ void DSD_SendTestSPI()
 // Send txBuffer to MOSI and fill in the rxBuffer with data coming from MISO
 uint8_t DSD_SendBytes(uint8_t* txBuffer, uint8_t* rxBuffer, uint8_t size)
 {
+	uint8_t i = 0;
+
+	/* Check invalid pointers */
 	if(txBuffer == NULL || rxBuffer == NULL)
 		return 0;
 
-	uint8_t i = 0;
+
+	/* Send data */
+	DGD_WritePin(PORTA, 4, LOW); // assert NSS
 
 	while(i < size)
 	{
@@ -147,6 +157,8 @@ uint8_t DSD_SendBytes(uint8_t* txBuffer, uint8_t* rxBuffer, uint8_t size)
 
 		i++;
 	}
+
+	DGD_WritePin(PORTA, 4, HIGH); // release NSS
 
 	return i; // export i as bytes written
 }

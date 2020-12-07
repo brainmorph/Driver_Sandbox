@@ -94,11 +94,6 @@ int main(void)
   DGD_InitPort(PORTB);
   DGD_InitPort(PORTA);
 
-  DGD_SetPinDirection(PORTB, 5, OUTPUT);
-  DGD_WritePin(PORTB, 5, LOW);
-
-  DGD_SetPinDirection(PORTA, 4, OUTPUT);
-  DGD_WritePin(PORTA, 4, HIGH);
 
   // Setup SPI1
   DGD_SetPinAlternateFunction(PORTB, 3, 5); // Set PortB Pin 3 as SPI1 function (SCK)
@@ -123,9 +118,7 @@ int main(void)
 
 	  uint8_t txBuffer[2] = {0x06, 0xa5};
 	  uint8_t rxBuffer[2];
-	  DGD_WritePin(PORTA, 4, LOW);
 	  DSD_SendBytes(txBuffer, rxBuffer, 2);
-	  DGD_WritePin(PORTA, 4, HIGH);
 
 	  static uint8_t count;
 	  DSD_SendBytes(&count, rxBuffer, 1);

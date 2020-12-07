@@ -275,3 +275,42 @@ So I'm kinda stuck... I don't understand where my radio has the SPI read registe
 And... after wasting some time, I realized I overlooked someting very clear in the datasheet.  I don't know how I missed it but I did.  There's a wnr bit (1 if write, 0 if read) in the register address byte.  What I'm not clear on is if it's the 0th bit or the 7th.  I think it's the 0th, I'll try that first.
 
 The only other thing that's missing is I need to drive an NSS pin high/low... I was relying on hardware doing this for me but it doesn't seem to do that.
+
+
+
+-------------------------------------------------------------------------------------------
+
+10:55 AM 12/6/2020
+
+LoRa radio seems to have the following needs (from studing the RadioHead library):
+
+In order to send a packet, I need to send several bytes to the same SPI register on the LoRa radio.  Namely register 0x00 (RegFifo).  Writing to this register automatically increments some FIFO somewhere that I'm not clear on.
+
+But the code look like this:
+
+spiWrite(0x00, txHeaderTo)   (??)
+spiWrite(0x00, txHeaderFrom) (??)
+spiWrite(0x00, txHeaderId)   (??)
+spiWrite(0x00, txHeaderFlags)(??)
+spiWriteBytes(0x00, data, len)
+
+then write the payload length
+
+spiWrite(0x22, len + HEADER_LEN)
+
+then turn on radio...
+
+setModeTx()
+	I've yet to trace exactly what this function does, but most likely since the radio has all the bits it needs at this point inside its registers (inside the FIFO buffer specifically), all I should need to do is turn on a single bit somewhere to start the radio.
+
+According to the documentation:
+	-> It is possible to store both transmit and receive information in the FIFO at the same time
+	-> Tx and Rx base addresses are fully configurable across the 256 byte memory area of the buffer
+	-> By default the device is configured to have Tx pointer at 0x80 (halfway) and Rx pointer at 0x00
+	-> The FIFO buffer is cleared when device is put in SLEEP mode
+	-> Cannot access FIFO while in SLEEP mode, can use something like STANDBY mode instead
+	-> The actual location to read from or write to over the SPI interface is defined by the address pointer FifoAddrPtr.  Before any read or write operation it is necessary to initialize this pointer to the corresponding base value.  Upon reading or writing to the FIFO data buffer (RegFifo) the address pointer will then increment automatically.
+	-> Register FifoRxBytesNb defines how many bytes to expect when receiving data from radio
+	-> PayloadLength register indicates size of memory location to be transmitted.  Basically when radio gets turned on the radio starts at Tx pointer and sends PayloadLength bytes out over radio.
+
+I think I have a very basic understanding of how the LoRa radio works at this point.  I think it's worth starting a very basic driver for it.
