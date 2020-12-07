@@ -63,45 +63,12 @@ help:
 
 
 #Auto-execute program after compiling
-program: $(LIST_IMPORTANT_FILES:.c=.o) last_step
+program: $(LIST_IMPORTANT_FILES:.c=.o) all_tests.exe
 	./all_tests.exe
 
-#Compile everything into an executable
-last_step:
+
+all_tests.exe: $(LIST_IMPORTANT_FILES:.c=.o)
 	gcc $(CFLAGS) $(BLD_DIR)/* -o all_tests.exe
-
-
-
-# $(BLD_DIR)/dc_hal_spiTest.o: $(TST_DIR)/dc_hal_spiTest.c
-# 	gcc $(CFLAGS) -I$(INC_DIR) $(UNITY_INC) -c $(TST_DIR)/dc_hal_spiTest.c -o $(BLD_DIR)/dc_hal_spiTest.o
-# 	@echo ">>>woot $@ is done"
-	
-# $(BLD_DIR)/all_tests.o: $(TST_DIR)/test_runners/all_tests.c
-# 	gcc $(CFLAGS) -I$(INC_DIR) $(UNITY_INC) -c $(TST_DIR)/test_runners/all_tests.c -o $(BLD_DIR)/all_tests.o
-# 	@echo ">>>woot $@ is done"
-	
-# $(BLD_DIR)/dc_hal_spiTestRunner.o: $(TST_DIR)/test_runners/dc_hal_spiTestRunner.c
-# 	gcc $(CFLAGS) -I$(INC_DIR) $(UNITY_INC) -c $(TST_DIR)/test_runners/dc_hal_spiTestRunner.c -o $(BLD_DIR)/dc_hal_spiTestRunner.o
-# 	@echo ">>>woot $@ is done"
-	
-# $(BLD_DIR)/unity_fixture.o: $(UNITY_DIR)/extras/fixture/src/unity_fixture.c
-# 	gcc $(CFLAGS) -I$(INC_DIR) $(UNITY_INC) -c $(UNITY_DIR)/extras/fixture/src/unity_fixture.c -o $(BLD_DIR)/unity_fixture.o
-# 	@echo ">>>woot $@ is done"
-	
-# $(BLD_DIR)/dc_hal_spi.o: $(SRC_DIR)/dc_hal_spi.c
-# 	gcc $(CFLAGS) -I$(INC_DIR) $(UNITY_INC) -c $(SRC_DIR)/dc_hal_spi.c -o $(BLD_DIR)/dc_hal_spi.o
-# 	@echo ">>>woot $@ is done"
-
-# $(BLD_DIR)/unity.o: $(UNITY_DIR)/src/unity.c
-# 	gcc $(CFLAGS) -I$(INC_DIR) $(UNITY_INC) -c $(UNITY_DIR)/src/unity.c -o $(BLD_DIR)/unity.o
-# 	@echo ">>>woot $@ is done"
-
-
-
-	
-# program: $(BLD_DIR)/dc_hal_spiTest.o $(BLD_DIR)/all_tests.o $(BLD_DIR)/dc_hal_spiTestRunner.o $(BLD_DIR)/unity_fixture.o $(BLD_DIR)/dc_hal_spi.o $(BLD_DIR)/unity.o
-# 	gcc $(CFLAGS) $(BLD_DIR)/* -o all_tests.exe
-# 	@echo ">>>woot $@ is done"
 	
 clean:
 	rm -f bld/*.o
