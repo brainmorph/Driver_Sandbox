@@ -1,3 +1,5 @@
 /Debug/
 
 **/*.o
+
+TESTS/all_tests.exe
