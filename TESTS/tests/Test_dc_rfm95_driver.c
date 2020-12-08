@@ -42,9 +42,31 @@ TEST_TEAR_DOWN(dc_rfm95_driver)
 TEST(dc_rfm95_driver, DRD_ReadRegister)
 {
 	uint8_t testRegister = 0x9D;
-	printf("Test register before: 0x%x \r\n", testRegister);
+	printf("RFM95 read command before: 0x%x \r\n", testRegister);
 	DRD_ReadRegister(testRegister);
 	
-	TEST_ASSERT_EQUAL(0, CHECK_BIT(th.virtualRegister, 7));  // Check that 7th bit is set to 0
-	printf("DRD_ReadRegister after: 0x%x \r\n", th.virtualRegister);
+	// Check that 7th bit is set to 0
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(th.virtualRegister, 7));
+	printf("RFM95 read command after: 0x%x \r\n", th.virtualRegister);
+
+	//Check that the lower 7 bits are unchanged
+	printf("0x%x  0x%x \r\n", testRegister, th.virtualRegister);
+	printf("0x%x  0x%x \r\n", testRegister & 0x7F, th.virtualRegister & 0x7F);
+	TEST_ASSERT_EQUAL(0x7F & testRegister, 0x7F & th.virtualRegister);
+}
+
+TEST(dc_rfm95_driver, DRD_WriteRegister)
+{
+	uint8_t testRegister = 0x9D;
+	printf("RFM95 write command before: 0x%x \r\n", testRegister);
+	DRD_WriteRegister(testRegister);
+
+	// Check that 7th bit is set to 1
+	TEST_ASSERT_EQUAL(1, CHECK_BIT(th.virtualRegister, 7));
+	printf("RFM95 write command after: 0x%x \r\n", th.virtualRegister);
+
+	//Check that the lower 7 bits are unchanged
+	printf("0x%x  0x%x \r\n", testRegister, th.virtualRegister);
+	printf("0x%x  0x%x \r\n", testRegister & 0x7F, th.virtualRegister & 0x7F);
+	TEST_ASSERT_EQUAL(0x7F & testRegister, 0x7F & th.virtualRegister);
 }

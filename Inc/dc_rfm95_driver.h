@@ -88,7 +88,7 @@
 #ifdef UNIT_TEST
 typedef struct
 {
-	uint8_t virtualRegister;
+	uint8_t virtualRegister; // generic container for single byte
 }TestHandle;
 #endif
 
@@ -96,6 +96,7 @@ typedef struct
 * Global Function Declarations
 ***************************************************************************************************/
 uint8_t DRD_ReadRegister(uint8_t regAddress);
+void DRD_WriteRegister(uint8_t regAddress);
 void DRD_SetModeIdle();
 void DRD_SetModeSleep();
 
