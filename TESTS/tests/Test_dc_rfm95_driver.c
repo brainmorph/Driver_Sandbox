@@ -19,7 +19,8 @@
 /***************************************************************************************************
 *     Static Variable Definitions
 ***************************************************************************************************/
-static uint32_t virtual_register = 0;
+static TestHandle th;
+
 
 
 TEST_GROUP(dc_rfm95_driver);
@@ -27,9 +28,10 @@ TEST_GROUP(dc_rfm95_driver);
 TEST_SETUP(dc_rfm95_driver) // This runs before every test
 {
 	//printf("Setting up test...\n");
-	virtual_register = 0x0;
+	th.virtualRegister = 0x0;
 
-	
+	//Inject test harness into driver
+	UT_SetActiveTestHandle(&th);
 }
 
 TEST_TEAR_DOWN(dc_rfm95_driver)
@@ -39,5 +41,10 @@ TEST_TEAR_DOWN(dc_rfm95_driver)
 
 TEST(dc_rfm95_driver, DRD_ReadRegister)
 {
+	uint8_t testRegister = 0x9D;
+	printf("Test register before: 0x%x \r\n", testRegister);
+	DRD_ReadRegister(testRegister);
 	
+	TEST_ASSERT_EQUAL(0, CHECK_BIT(th.virtualRegister, 7));  // Check that 7th bit is set to 0
+	printf("DRD_ReadRegister after: 0x%x \r\n", th.virtualRegister);
 }

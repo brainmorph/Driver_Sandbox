@@ -12,15 +12,13 @@
 #include "dc_spi_driver.h"
 
 
+
+/***************************************************************************************************
+*     Static Variable Definitions
+***************************************************************************************************/
 #ifdef UNIT_TEST
-typedef struct
-{
-	uint8_t virtualRegister;
-}UThandle;
-
-static UThandle utHandle;
+static TestHandle* th;
 #endif
-
 
 /***************************************************************************************************
 *      Global Function Definitions
@@ -33,8 +31,7 @@ uint8_t DRD_ReadRegister(uint8_t regAddress)
 	uint8_t rxBuffer[2];
 
 #ifdef UNIT_TEST
-	utHandle.virtualRegister = txBuffer[0];
-	return 0;
+	th->virtualRegister = txBuffer[0];
 #else
 	DSD_SendBytes(txBuffer, rxBuffer, 2);
 #endif
@@ -72,3 +69,23 @@ void DRD_SetModeSleep()
 	uint8_t rxBuffer[2];
 	DSD_SendBytes(txBuffer, rxBuffer, 2);
 }
+
+
+
+
+
+
+
+#ifdef UNIT_TEST
+/***************************************************************************************************
+*      Functions in this section are only to be used for unit testing internal functionality of module
+*      !DO NOT USE IN PRODUCTION CODE!
+***************************************************************************************************/
+/* Allow TestHandle to be changed by outside world */
+unit_static void UT_SetActiveTestHandle(TestHandle* newHandle)
+{
+	th = newHandle;
+}
+/***************************************************************************************************
+****************************************************************************************************/
+#endif
