@@ -108,24 +108,26 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  HAL_Delay(3);
+
   while (1)
   {
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
 
-	  uint8_t result = DRD_ReadRegister(DRD_RFM95_REG_06_FRF_MSB);
+
+
+	  //DRD_SetModeIdle();
+	  volatile uint8_t result = DRD_ReadMode();
 	  result = result;
 
-	  result = DRD_ReadRegister(DRD_RFM95_REG_07_FRF_MID);
-
-
-
-	  result = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
 	  DRD_SetModeIdle();
-	  result = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
+	  result = DRD_ReadMode();
+	  result = result;
+
 	  DRD_SetModeSleep();
-	  result = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
-	  DRD_SetModeIdle();
+	  result = DRD_ReadMode();
+	  result = result;
 
 	  HAL_Delay(3);
 

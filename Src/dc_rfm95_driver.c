@@ -23,7 +23,7 @@ static TestHandle* th;
 /***************************************************************************************************
 *      Global Function Definitions
 ***************************************************************************************************/
-uint8_t DRD_ReadRegister(uint8_t regAddress)
+unit_static uint8_t DRD_ReadRegister(uint8_t regAddress)
 {
 	regAddress &= 0x7F; // make sure it's a read cmd (7th bit = 0)
 
@@ -39,7 +39,7 @@ uint8_t DRD_ReadRegister(uint8_t regAddress)
 	return rxBuffer[1]; // return last byte received
 }
 
-void DRD_WriteRegister(uint8_t regAddress)
+unit_static void DRD_WriteRegister(uint8_t regAddress)
 {
 	regAddress |= 0x80; // make sure it's a write cmd (7th bit = 1)
 
@@ -54,6 +54,12 @@ void DRD_WriteRegister(uint8_t regAddress)
 }
 
 
+uint8_t DRD_ReadMode()
+{
+	uint8_t mode = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
+	mode &= 0x07; // read mode bits [2:0]
+	return mode;
+}
 
 void DRD_SetModeIdle()
 {

@@ -86,19 +86,26 @@
 * Global Type Definitions
 **********************************************************************/
 #ifdef UNIT_TEST
+#define unit_static
+#else
+#define unit_static static
+#endif
+
+#ifdef UNIT_TEST
 typedef struct
 {
 	uint8_t virtualRegister; // generic container for single byte
 }TestHandle;
 #endif
 
+
 /***************************************************************************************************
 * Global Function Declarations
 ***************************************************************************************************/
-uint8_t DRD_ReadRegister(uint8_t regAddress);
-void DRD_WriteRegister(uint8_t regAddress);
+uint8_t DRD_ReadMode();
 void DRD_SetModeIdle();
 void DRD_SetModeSleep();
+
 
 
 
