@@ -5,16 +5,39 @@
  *      Author: DC
  */
 
+/**********************************************************************
+*     Include Files
+**********************************************************************/
 #include "dc_rfm95_driver.h"
 #include "dc_spi_driver.h"
 
+
+#ifdef UNIT_TEST
+typedef struct
+{
+	uint8_t virtualRegister;
+}UThandle;
+
+static UThandle utHandle;
+#endif
+
+
+/***************************************************************************************************
+*      Global Function Definitions
+***************************************************************************************************/
 uint8_t DRD_ReadRegister(uint8_t regAddress)
 {
 	regAddress &= 0x7F; // make sure it's read only (7th bit = 0)
 
 	uint8_t txBuffer[2] = {regAddress, 0xa5}; // send register address in read mode along with dummy byte
 	uint8_t rxBuffer[2];
+
+#ifdef UNIT_TEST
+	utHandle.virtualRegister = txBuffer[0];
+	return 0;
+#else
 	DSD_SendBytes(txBuffer, rxBuffer, 2);
+#endif
 
 	return rxBuffer[1]; // return last byte received
 }

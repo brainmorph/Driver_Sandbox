@@ -314,3 +314,39 @@ According to the documentation:
 	-> PayloadLength register indicates size of memory location to be transmitted.  Basically when radio gets turned on the radio starts at Tx pointer and sends PayloadLength bytes out over radio.
 
 I think I have a very basic understanding of how the LoRa radio works at this point.  I think it's worth starting a very basic driver for it.
+
+
+-------------------------------------------------------------------------------------------
+
+10:58 AM 12/7/2020
+
+I've been thinking a bit about how to test different modules.  Yesterday I ran across the case where, for example in my LoRa driver, I have a function ...Read...RFM95...Register() something like that, and this function calls SendBytes from SPI driver.  Now to unit test the ReadRFM95Register function I need to stub out the call to SPI since... there's no way for the Unit test framework (which runs on a HOST machine, not on TARGET) to run SPI hardware.
+
+So I need to spoof the SPI call.  That's fine, I can do that, I can do something like throw in a #ifdef UNIT_TEST inside my ReadRFM95Register and dedicate a portion of it to use fake hardware registers... which is how I've been testing GPIO drivers and such.  The issue is that this adds a lot of bloat code to my SOURCE files... is this normal?
+
+Confirming with discord embedded people, using #ifdef(s) to modify how a function behaves when running productionvs when running unit_test version is safe as long as the number of lines needed are relatively few.
+
+Another idea is to use a different funtion at link time, whenever a module under test needs to access hardware or something, stub in a different version of the function definition.
+	-> Ex) Lora_ReadRegister() function needs to call SPI_Read() function, but during unit test time there's no hardware and no SPI, so the SPI_Read() function's definition can be different during unit_testing and subbed in at link time.  A little more advanced... but possible.
+	-> The good people at discord are suggesting this isn't a good way to go as it will mean writing tons of framework code to support simulating these hardware functions.  Much better to just use an #ifdef UNIT_TEST inside each source code function that has a few lines dedicated to mocking the functions it calls.
+
+Trying to read more about general approach to mocking out external functions to the one that's being tested...
+
+Came across Cmockery library.  And it reads as follows:
+"Cmockery tests are compiled into stand-alone executables and linked with the Cmockery library, the standard C library, and the module being tested. Any symbols external to the module being tested should be mocked - replaced with functions that return values determined by the test - within the test application. Even though significant differences may exist between the target execution environment of a code module and the environment used to test the code, the unit testing is still valid since its goal is to test the logic of a code modules at a functional level and not necessarily all of its interactions with the target execution environment.
+
+It may not be possible to compile a module into a test application without some modification; therefore, the preprocessor symbol UNIT_TESTING should be defined when Cmockery unit test applications are compiled so code within the module can be conditionally compiled for tests."
+
+Now how is this different to Unity...?  I'm not sure.  Let's check unity for any hits regarding "mocking"
+	-> Unity (throwtheswitch) talks about extending Unity with CMock for "full mocking support".
+
+After a bit of extra reading on top of that... I've come to the conclusion that unit testing in C is either 1) Really difficult 2) If it's not difficult, then it's ugly.  Managing mocks is a really tall order in C and not without a lot of wrinkles.
+
+For my own purposes, I don't want to drown in learning this stuff... and I feel as that may already be happening.  There's too much to know, too many avenues to explore, too many pros/cons with each avenue to realistically put a model together for how to manage all cases.
+
+For now, I will just know that all these techniques exist out there for writing fancy-er testable code, but the fact that it's fancy makes it hard to follow and I'm not willing to have that trade-off at the moment.  I'd rather put in a bit more effort, have slightly uglier code, but have it be clear as day as to what it's doing.
+
+Either way... I spent the majority of today trying to figure out how to architect mocks and... I'm not super happy about how long it's taking me to make a decision and continue forward.
+
+
+

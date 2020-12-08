@@ -45,7 +45,7 @@ TEST_SETUP(dc_spi_driver) // This runs before every test
 	virtual_SPI_handle.registers = &virtual_SPI_registers;
 	virtual_SPI_handle.clock = &virtual_register;
 
-	UT_SetActiveGPIOhandle(&virtual_SPI_handle); // inject virtual GPIO handle into driver
+	UT_SetActiveSPIhandle(&virtual_SPI_handle); // inject virtual SPI handle into driver
 }
 
 TEST_TEAR_DOWN(dc_spi_driver)

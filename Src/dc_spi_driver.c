@@ -137,9 +137,8 @@ void DSD_SendTestSPI()
 // Send txBuffer to MOSI and fill in the rxBuffer with data coming from MISO
 uint8_t DSD_SendBytes(uint8_t* txBuffer, uint8_t* rxBuffer, uint8_t size)
 {
-	uint8_t i = 0;
 
-	/* Check invalid pointers */
+	/* Check for invalid pointers */
 	if(txBuffer == NULL || rxBuffer == NULL)
 		return 0;
 
@@ -147,6 +146,7 @@ uint8_t DSD_SendBytes(uint8_t* txBuffer, uint8_t* rxBuffer, uint8_t size)
 	/* Send data */
 	DGD_WritePin(PORTA, 4, LOW); // push NSS down
 
+	uint8_t i = 0;
 	while(i < size)
 	{
 		activeSPIhandle.registers->DR = txBuffer[i];
