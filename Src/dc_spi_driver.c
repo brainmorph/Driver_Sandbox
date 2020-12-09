@@ -61,6 +61,12 @@ void DSD_InitSPI()
 	activeSPIhandle.registers = (DSD_SPI_TypeDef*)SPI1;
 #endif
 
+	// Set alternate functions
+	DGD_SetPinAlternateFunction(PORTB, 3, 5); // Set PortB Pin 3 as SPI1 function (SCK)
+	DGD_SetPinAlternateFunction(PORTB, 5, 5); // Set PortB Pin 5 as SPI1 function (MOSI)
+	//DGD_SetPinAlternateFunction(PORTA, 4, 5); // Set PORTA Pin 4 as SPI1 function (NSS)
+	DGD_SetPinAlternateFunction(PORTB, 4, 5); // Set PortB Pin 4 as SPI1 function (MISO)
+
 	// Enable clock for SPI interface
 	DSD_SetBit(activeSPIhandle.clock, 12);
 

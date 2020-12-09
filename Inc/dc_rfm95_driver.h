@@ -105,6 +105,9 @@ typedef struct
 uint8_t DRD_ReadMode();
 void DRD_SetModeIdle();
 void DRD_SetModeSleep();
+void DRD_SetModeTransmit();
+
+void DRD_TransmitTest();
 
 
 
