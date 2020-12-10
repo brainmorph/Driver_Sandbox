@@ -55,6 +55,8 @@ unit_static void DRD_WriteRegister(uint8_t regAddress, uint8_t data)
 
 
 
+
+
 void DRD_TransmitTest()
 {
 	DRD_SetModeIdle();
@@ -74,15 +76,15 @@ void DRD_TransmitTest()
 	DRD_SetModeTransmit();
 
 	// Check mode
-	reg = DRD_ReadMode();
+	reg = DRD_ReadCurrentMode();
 
 	while(reg != 0x01)
 	{
-		reg = DRD_ReadMode();
+		reg = DRD_ReadCurrentMode();
 	}
 }
 
-uint8_t DRD_ReadMode()
+uint8_t DRD_ReadCurrentMode()
 {
 	uint8_t mode = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
 	mode &= 0x07; // read mode bits [2:0]
@@ -157,6 +159,42 @@ void DRD_SetModeTransmit()
 	uint8_t txBuffer[2] = {regAddress, previous};
 	uint8_t rxBuffer[2];
 	DSD_SendBytes(txBuffer, rxBuffer, 2);
+}
+
+void DRD_SetModeReceiveOnce()
+{
+	uint8_t regAddress = DRD_RFM95_REG_01_OP_MODE;
+	regAddress |= 0x80; // make sure it's a write command (7th bit = 1)
+
+	/* Get previous DRD_RFM95_REG_01_OP_MODE bits */
+	uint8_t previous = DRD_ReadRegister(DRD_RFM95_REG_01_OP_MODE);
+	previous &= 0xF8; // clear bits in Mode field
+
+	//previous |= 0x06; // set RXSINGLE mode
+
+	previous |= 0x07; // set CAD mode
+
+	uint8_t txBuffer[2] = {regAddress, previous};
+	uint8_t rxBuffer[2];
+	DSD_SendBytes(txBuffer, rxBuffer, 2);
+
+	// Check mode
+	volatile uint8_t reg = DRD_ReadCurrentMode();
+
+	while(reg != 0x01)
+	{
+		reg = DRD_ReadCurrentMode();
+	}
+
+	reg = DRD_ReadRegister(DRD_RFM95_REG_12_IRQ_FLAGS);
+
+
+	DRD_WriteRegister(DRD_RFM95_REG_12_IRQ_FLAGS, 0xFF); // clear RxTimeout IRQ and CadDone
+
+	reg = DRD_ReadRegister(DRD_RFM95_REG_1B_RSSI_VALUE);
+	reg = reg;
+
+
 }
 
 

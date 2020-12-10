@@ -114,9 +114,11 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 
-	  DRD_TransmitTest();
+	  //DRD_TransmitTest();
 
-	  volatile uint8_t mode = DRD_ReadMode();
+	  DRD_SetModeReceiveOnce();
+
+	  volatile uint8_t mode = DRD_ReadCurrentMode();
 	  mode = mode;
 
 	  HAL_Delay(3);

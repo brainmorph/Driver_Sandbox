@@ -102,13 +102,14 @@ typedef struct
 /***************************************************************************************************
 * Global Function Declarations
 ***************************************************************************************************/
-uint8_t DRD_ReadMode();
+uint8_t DRD_ReadCurrentMode();
 void DRD_SetModeIdle();
 void DRD_SetModeSleep();
 void DRD_SetModeTransmit();
+void DRD_SetModeReceiveOnce();
 
 void DRD_TransmitTest();
-
+void DRD_SetLORAMode();
 
 
 
