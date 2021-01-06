@@ -2,4 +2,6 @@
 
 **/*.o
 
+DAILY_LOG.txt
+
 TESTS/all_tests.exe
